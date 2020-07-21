@@ -1,17 +1,17 @@
 package envelopes;
 
 import arrays.Array;
+import envelopes.AmplitudeOscillator.WaveType;
 import waves.SawWave;
 import waves.SineWave;
 import waves.SquareWave;
 import waves.TriangleWave;
 import waves.Wave;
-import waves.Wave.WaveType;
 
 /**
-@author Alexander Johnston 
-        Copyright 2019 
-        A class for making frequency envelopes
+ * @author Alexander Johnston 
+ * @since  2019 
+ *         A class for making frequency envelopes.
  */
 public class FrequencyEnvelope extends Envelope{
 
@@ -27,7 +27,7 @@ public class FrequencyEnvelope extends Envelope{
 	// The frequency at the end of the release
 	double endFrequency;
 
-	/**       Constructs a frequency envelope with 
+	/**       Constructs a frequency envelope. 
 	 * @param attack in seconds as the amount of time it takes to get from 0 to the amplitude 
 	 * @param decay in seconds as the amount of time it takes to get from the amplitude to the sustain
 	 * @param release in seconds as the amount of time it takes to get from the sustain to 0
@@ -106,37 +106,39 @@ public class FrequencyEnvelope extends Envelope{
 		return envelope;
 	}
 
-	/**        Adds this FrequencyEnvelope to a LinearAmplitudeEnvelope
+	/**        Adds this FrequencyEnvelope to a LinearAmplitudeEnvelope.
 	 * @param  linearAmplitudeEnvelope as the LinearAmplitudeEnvelope
 	 * @param  amplitude as the amplitude of the wave
 	 * @param  waveType as the WaveType of this oscillator
 	 * @param  samplesPerSecond as the sample rate
 	 * @return an array of sound representing this FrequencyEnvelope with the LinearAmplitudeEnvelope
 	 */
-	public double[] getSample(LinearAmplitudeEnvelope linearAmplitudeEnvelope, double amplitude, WaveType waveType, float samplesPerSecond){
+	public double[] getSample(LinearAmplitudeEnvelope linearAmplitudeEnvelope, double amplitude
+			, WaveType waveType, float samplesPerSecond){
 		double[] amplitudeArray = linearAmplitudeEnvelope.getEnvelope();
 		double[] frequencyArray = this.getEnvelope();
 		double[] wave = new double[amplitudeArray.length];
 		double[] temp; 
 		double radians = 0; 
+		boolean updateRadians = true;
 		Wave tempWave;
 
 		for(int i = 0; i < frequencyArray.length-1; i++) {
 			switch(waveType) {
 			case SINE: 
-				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case TRIANGLE:
-				tempWave = new TriangleWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians); 
+				tempWave = new TriangleWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SAW:
-				tempWave = new SawWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians); 
+				tempWave = new SawWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SQUARE:
-				tempWave = new SquareWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians); 
+				tempWave = new SquareWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			default:
-				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			}
 
@@ -147,27 +149,32 @@ public class FrequencyEnvelope extends Envelope{
 
 		switch(waveType) {
 		case SINE: 
-			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case TRIANGLE:
-			tempWave = new TriangleWave(amplitudeArray[amplitudeArray.length-1]*amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new TriangleWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SAW:
-			tempWave = new SawWave(amplitudeArray[amplitudeArray.length-1]*amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SawWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SQUARE:
-			tempWave = new SquareWave(amplitudeArray[amplitudeArray.length-1]*amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SquareWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		default:
-			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		}
 		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 		wave[frequencyArray.length-1] = temp[0]; 
-		return Wave.scaleWave(wave, amplitude/Wave.getMaxAmp(wave));
+		return Array.scale(wave, amplitude/Array.mag(wave));
 	}
 
-	/**        Adds this FrequencyEnvelope to an AmplitudeEnvelope
+	/**        Adds this FrequencyEnvelope to an AmplitudeEnvelope.
 	 * @param  frequencyEnvelope as the frequency envelope
 	 * @param  amplitude as the amplitude of the wave
 	 * @param  seconds as the time in seconds
@@ -175,11 +182,13 @@ public class FrequencyEnvelope extends Envelope{
 	 * @param  samplesPerSecond as the sample rate
 	 * @return an array of sound representing this FrequencyEnvelope over time
 	 */
-	public double[] getSample(double[] frequencyEnvelope, double amplitude, double seconds, WaveType waveType, float samplesPerSecond){
+	public double[] getSample(double[] frequencyEnvelope, double amplitude, double seconds
+			, WaveType waveType, float samplesPerSecond){
 		double[] frequencyArray = new double[(int) Math.ceil((seconds*samplesPerSecond))];
 		double[] wave = new double[(int) Math.ceil((seconds*samplesPerSecond))];
 		double[] temp; 
 		double radians = 0; 
+		boolean updateRadians = true;
 		Wave tempWave;
 
 		int slices = (frequencyArray.length/frequencyEnvelope.length);
@@ -194,19 +203,19 @@ public class FrequencyEnvelope extends Envelope{
 		for(int i = 0; i < frequencyArray.length-1; i++) {
 			switch(waveType) {
 			case SINE: 
-				tempWave = new SineWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case TRIANGLE:
-				tempWave = new TriangleWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new TriangleWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SAW:
-				tempWave = new SawWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SawWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SQUARE:
-				tempWave = new SquareWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SquareWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			default:
-				tempWave = new SineWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			}
 
@@ -217,24 +226,24 @@ public class FrequencyEnvelope extends Envelope{
 
 		switch(waveType) {
 		case SINE: 
-			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case TRIANGLE:
-			tempWave = new TriangleWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new TriangleWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SAW:
-			tempWave = new SawWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SawWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SQUARE:
-			tempWave = new SquareWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SquareWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		default:
-			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		}
 		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 		wave[frequencyArray.length-1] = temp[0]; 
-		return Wave.scaleWave(wave, amplitude/Wave.getMaxAmp(wave));
+		return Array.scale(wave, amplitude/Array.mag(wave));
 	}
 
 	/**       // TODO
@@ -242,7 +251,8 @@ public class FrequencyEnvelope extends Envelope{
 	 * @param waveType
 	 * @param samplesPerSecond
 	 */
-	public void addFrequencyOscillator(FrequencyOscillator frequencyOscillator, WaveType waveType, float samplesPerSecond) {
+	public void addFrequencyOscillator(FrequencyOscillator frequencyOscillator, WaveType waveType, 
+			float samplesPerSecond) {
 		
 	}
 

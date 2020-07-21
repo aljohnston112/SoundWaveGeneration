@@ -64,12 +64,14 @@ public class MainPlotter extends Application {
 		double amplitudeOfTremolo = 1.0;
 		double hertz = 2.0;
 		double radians = 0.0;
-		SineWave sineWave = new SineWave(amplitudeOfTremolo, hertz, radians);
+		boolean updateRadians = false;
+
+		SineWave sineWave = new SineWave(amplitudeOfTremolo, hertz, radians, updateRadians);
 
 		ExecutorService threadRunner = Executors.newCachedThreadPool();
 		
 		// Add tremolo to linear amplitude envelope
-		linearAmplitudeEnvelope.addTremolo(sineWave, samplesPerSecond, threadRunner);
+		linearAmplitudeEnvelope.addTremolo(sineWave, samplesPerSecond);
 		double time = linearAmplitudeEnvelope.getTime();
 		data[1] = linearAmplitudeEnvelope.getEnvelope();
 
@@ -135,7 +137,7 @@ public class MainPlotter extends Application {
 
 		// Add tremolo swell to linear amplitude envelope
 		LinearAmplitudeEnvelope linearAmplitudeEnvelope14 = new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
-		linearAmplitudeEnvelope14.addTremoloSwell(sineWave, samplesPerSecond, threadRunner);
+		linearAmplitudeEnvelope14.addTremoloSwell(sineWave, samplesPerSecond);
 		data[14] = linearAmplitudeEnvelope14.getEnvelope();
 		return data;
 	}
@@ -204,11 +206,11 @@ public class MainPlotter extends Application {
 		}
 		return xAxis;
 	}
+	
 	/**       Loads data into a scatter plot
 	 * @param x as the x-values
 	 * @param y as multiple sets of y-values
 	 */
-
 	public void loadData(double[] x, double[][] y) {
 
 		// For generating the y-axis

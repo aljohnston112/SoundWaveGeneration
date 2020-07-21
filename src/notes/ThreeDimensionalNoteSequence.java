@@ -7,12 +7,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import arrays.Array;
+import arrays.ConcatThread;
+import arrays.AddThread;
 import logic.OrderedPair;
 import waves.Wave;
-import waves.WaveAddThread;
-import waves.WaveConcatThread;
 
 /**
 @author Alexander Johnston 
@@ -190,7 +191,7 @@ public class ThreeDimensionalNoteSequence {
 		}
 		threadRunner.shutdown();
 		try {
-			return Array.getMax(futureSineWaves.get(0).get(), threadRunner);
+			return Array.max(futureSineWaves.get(0).get(), threadRunner);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -246,13 +247,15 @@ public class ThreeDimensionalNoteSequence {
 				FutureTask<double[]> future = new FutureTask<double[]>(new Callable<double[]>() {
 					@Override
 					public double[] call() throws Exception {
-						return WaveConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);					}
+						return ConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);					}
 				});
-				threadRunner.execute(future);
 				wavesToBeAdded.add(future);
+				threadRunner.submit(future);
+
 			}
 		}
-		return WaveAddThread.addWavesButterfly(wavesToBeAdded, threadRunner);
+		
+		return AddThread.addWavesButterfly(wavesToBeAdded, threadRunner);
 	}
 
 }

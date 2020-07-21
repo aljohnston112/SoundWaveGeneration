@@ -39,9 +39,6 @@ public class WaveConcatThread implements Callable<double[]> {
 		if(futureChannelOfWaves.size() == 1) {
 			return futureChannelOfWaves.get(futureChannelOfWaves.size()-1);
 		}
-		if(futureChannelOfWaves.size() == 0) {
-			return null;
-		}
 		ArrayList<Future<double[]>> futureConcatonatedChannels = new ArrayList<Future<double[]>>();
 		if(futureChannelOfWaves.size() % 2 == 0) {
 			for(int i = 0; i < futureChannelOfWaves.size(); i+=2) {

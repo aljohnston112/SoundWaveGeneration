@@ -1,5 +1,7 @@
 package envelopes;
 
+import arrays.Array;
+import envelopes.AmplitudeOscillator.WaveType;
 import function.HyperbolicSine;
 import function.Power;
 import function.Root;
@@ -15,7 +17,6 @@ import waves.SineWave;
 import waves.SquareWave;
 import waves.TriangleWave;
 import waves.Wave;
-import waves.Wave.WaveType;
 
 /**
 @author Alexander Johnston 
@@ -25,23 +26,19 @@ import waves.Wave.WaveType;
 public class FunctionFreqEnvelope {
 
 	// The phase
-	double radians;
+	private double radians;
+	
+	final private boolean updateRadians;
 
-	/**
-	 *  Creates a function frequency envelope that starts at phase 0
-	 */
-	public FunctionFreqEnvelope(){
-		radians = 0;
-	}
-
-	/** Creates a function frequency envelope that starts at phase p
+	/**       Creates a function frequency envelope that starts at phase p.
 	 * @param radians The phase to start this function frequency envelope at
 	 */
-	public FunctionFreqEnvelope(double radians){
+	public FunctionFreqEnvelope(double radians, boolean updateRadians){
 		this.radians = radians;
+		this.updateRadians = updateRadians;
 	}
 
-	/**        Creates a linear frequency envelope that goes from f0 to ft
+	/**        Creates a linear frequency envelope that goes from f0 to ft.
 	 * @param  f0 The starting frequency
 	 * @param  ft The ending frequency
 	 * @param  t The time for this envelope to take
@@ -53,7 +50,7 @@ public class FunctionFreqEnvelope {
 		return l.fun(0.0, t, 1.0/sr);
 	}
 	
-	/**        Creates a wave sample of a linear shaped frequency envelope that goes from f0 to ft
+	/**        Creates a wave sample of a linear shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -68,7 +65,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	
-	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -93,7 +90,7 @@ public class FunctionFreqEnvelope {
 		return data;
 	}
 
-	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -107,7 +104,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 	
-	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -132,7 +129,7 @@ public class FunctionFreqEnvelope {
 		return data;
 	}
 
-	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -146,7 +143,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 
-	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft and then to f0
+	/**        Creates a quadratic shaped frequency envelope that goes from f0 to ft and then to f0.
 	 * @param  f0 The first and last frequency of this envelope
 	 * @param  ft The middle frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -171,7 +168,7 @@ public class FunctionFreqEnvelope {
 		return data;
 	}
 
-	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft and then to f0
+	/**        Creates a wave sample of a quadratic shaped frequency envelope that goes from f0 to ft and then to f0.
 	 * @param  f0 The first and last frequency of this envelope
 	 * @param  ft The middle frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -185,7 +182,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 
-	/**        Creates a cubic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a cubic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -197,7 +194,7 @@ public class FunctionFreqEnvelope {
 		return c.fun(0.0, t, t/(sr*t));
 	}
 
-	/**        Creates a wave sample of a cubic shaped frequency envelope that goes from f0 to ft
+	/**        Creates a wave sample of a cubic shaped frequency envelope that goes from f0 to ft.
 	 * @param  f0 The first frequency of this envelope
 	 * @param  ft The last frequency of this envelope
 	 * @param  t The amount of time for this envelope to take
@@ -212,7 +209,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a cubic shaped frequency envelope the goes from 
-	 *         ft to the inflection point at f0 and then to an inflection point at ft
+	 *         ft to the inflection point at f0 and then to an inflection point at ft.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -228,7 +225,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**       Creates a wave sample of a cubic shaped frequency envelope that goes from
-	 *        ft to the inflection point at f0 and then to an inflection point at ft
+	 *        ft to the inflection point at f0 and then to an inflection point at ft.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -244,7 +241,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a cubic shaped frequency envelope the goes from 
-	 *         the inflection point at f0 to the inflection point at ft and then to a point at f0
+	 *         the inflection point at f0 to the inflection point at ft and then to a point at f0.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -260,7 +257,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a wave from a cubic shaped frequency envelope the goes from 
-	 *         the inflection point at f0 to the inflection point at ft and then to a point at f0
+	 *         the inflection point at f0 to the inflection point at ft and then to a point at f0.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -276,7 +273,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a cubic shaped frequency envelope the goes from 
-	 *         a point at ft to the inflection point at f0 to the inflection point at ft and then to a point at f0
+	 *         a point at ft to the inflection point at f0 to the inflection point at ft and then to a point at f0.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -292,7 +289,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a wave from a cubic shaped frequency envelope the goes from 
-	 *         a point at ft to the inflection point at f0 to the inflection point at ft and then to a point at f0
+	 *         a point at ft to the inflection point at f0 to the inflection point at ft and then to a point at f0.
 	 * @param  f0 The frequency of an inflection point
 	 * @param  ft The frequency of an inflection point
 	 * @param  t The time for this envelope to take
@@ -308,7 +305,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a quartic shaped frequency envelope that goes from 
-	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft
+	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft.
 	 * @param  f0 The starting frequency
 	 * @param  midF The frequency at t/2
 	 * @param  ft The ending frequency
@@ -323,7 +320,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a wave from a quartic shaped frequency envelope that goes from 
-	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft
+	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft.
 	 * @param  f0 The starting frequency
 	 * @param  midF The frequency at t/2
 	 * @param  ft The ending frequency
@@ -340,7 +337,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a quartic shaped frequency envelope that goes from 
-	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft
+	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft.
 	 * @param  f0 The starting frequency
 	 * @param  midF The frequency at t/3
 	 * @param  midF2 The frequency at 2*t/3
@@ -356,7 +353,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a wave from a quartic shaped frequency envelope that goes from 
-	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft
+	 *         the inflection point at f0 to the inflection point at midF to the inflection point at ft.
 	 * @param  f0 The starting frequency
 	 * @param  midF The frequency at t/3
 	 * @param  midF The frequency at 2*t/3
@@ -387,7 +384,7 @@ public class FunctionFreqEnvelope {
 	}
 
 	/**        Creates a root function shaped frequency envelope that goes from 
-	 *         f0 to ft
+	 *         f0 to ft.
 	 * @param  f0 The starting frequency
 	 * @param  ft The ending frequency
 	 * @param  r The root number Ex: 2 means y = x^(1/2) 
@@ -419,7 +416,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 
-	/**        Creates an array of frequencies represented as a power function
+	/**        Creates an array of frequencies represented as a power function.
 	 * @param  f0 The starting frequency of the envelope
 	 * @param  f The ending frequency of the envelope
 	 * @param  t The time for the envelope to take
@@ -432,7 +429,7 @@ public class FunctionFreqEnvelope {
 		return data;
 	}
 
-	/**        Creates a wave that changes frequency according to a power function
+	/**        Creates a wave that changes frequency according to a power function.
 	 * @param  f0 The starting frequency of the envelope
 	 * @param  f The ending frequency of the envelope
 	 * @param  t The time for the envelope to take
@@ -446,7 +443,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 	
-	/**        Creates an array of frequencies represented as a hyperbolic sine function
+	/**        Creates an array of frequencies represented as a hyperbolic sine function.
 	 * @param  f0 The starting frequency of the envelope
 	 * @param  f The ending frequency of the envelope
 	 * @param  t The time for the envelope to take
@@ -459,7 +456,7 @@ public class FunctionFreqEnvelope {
 		return data;
 	}
 
-	/**        Creates a wave that changes frequency according to a hyperbolic sine function
+	/**        Creates a wave that changes frequency according to a hyperbolic sine function.
 	 * @param  f0 The starting frequency of the envelope
 	 * @param  f The ending frequency of the envelope
 	 * @param  t The time for the envelope to take
@@ -473,7 +470,7 @@ public class FunctionFreqEnvelope {
 		return getSample(fa, t, a, wt, sr);
 	}
 
-	/**        Gets a wave sample given an array of frequencies
+	/**        Gets a wave sample given an array of frequencies.
 	 * @param  frequencyArray The array of frequencies
 	 * @param  seconds The amount of time to go through the array of frequencies
 	 * @param  amplitude The amplitude of the wave
@@ -481,26 +478,28 @@ public class FunctionFreqEnvelope {
 	 * @param  samplesPerSecond The sample rate
 	 * @return A wave sample whose frequency changes according to the array
 	 */
-	private double[] getSample(double[] frequencyArray, double seconds, double amplitude, WaveType waveType, float samplesPerSecond) {
+	private double[] getSample(double[] frequencyArray, double seconds, double amplitude
+			, WaveType waveType, float samplesPerSecond) {
 		double[] wave = new double[frequencyArray.length];
 		double[] temp; 
 		Wave tempWave;
+		double startRadians = this.radians;
 		for(int i = 0; i < frequencyArray.length-1; i++) {
 			switch(waveType) {
 			case SINE: 
-				tempWave = new SineWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case TRIANGLE:
-				tempWave = new TriangleWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new TriangleWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SAW:
-				tempWave = new SawWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SawWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			case SQUARE:
-				tempWave = new SquareWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SquareWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			default:
-				tempWave = new SineWave(amplitude, frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, updateRadians); 
 				break;
 			}
 
@@ -510,25 +509,28 @@ public class FunctionFreqEnvelope {
 		}
 		switch(waveType) {
 		case SINE: 
-			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case TRIANGLE:
-			tempWave = new TriangleWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new TriangleWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SAW:
-			tempWave = new SawWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SawWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		case SQUARE:
-			tempWave = new SquareWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SquareWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		default:
-			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians); 
+			tempWave = new SineWave(amplitude, frequencyArray[frequencyArray.length-1], radians, updateRadians); 
 			break;
 		}
 		radians += ((2.0*Math.PI)/((samplesPerSecond/(frequencyArray[frequencyArray.length-1])))); 
 		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 		wave[frequencyArray.length-1] = temp[0]; 
-		return Wave.scaleWave(wave, amplitude/Wave.getMaxAmp(wave));
+		if(!this.updateRadians) {
+			this.radians = startRadians;
+		}
+		return Array.scale(wave, amplitude/Array.mag(wave));
 	}
 
 }

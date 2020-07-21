@@ -1,20 +1,19 @@
 package waves;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
-@author Alexander Johnston 
-        Copyright 2019 
-        A class for making noise waves
-*/
+ * @author Alexander Johnston 
+ * @since  2019 
+ *         A class for making noise waves.
+ */
 public class NoiseWave extends Wave {
-	
-	// The amplitude of the noise
-	double amplitude;
-	
-	/**       Creates a noise wave
-	 * @param amplitude The amplitude of the noise wave
+
+	/**       Instantiates a NoiseWave.
+	 * @param amplitude The amplitude of the NoiseWave.
 	 */
 	public NoiseWave(double amplitude){
-		this.amplitude = amplitude;
+		super(amplitude);
 	}
 
 	/* (non-Javadoc)
@@ -22,19 +21,19 @@ public class NoiseWave extends Wave {
 	 */
 	@Override
 	public double[] getWave(double seconds, float samplesPerSecond) {
-		double[] wave = new double[(int) (samplesPerSecond*seconds)];
+		if(seconds < 0) {
+			throw new IllegalArgumentException("seconds passed to getWave() must be at least 0");
+		}
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to getWave() must be at least 1");
+		}
+		// Invariants secured
+
+		double[] wave = new double[(int) Math.round((samplesPerSecond*seconds))];
 		for(int i = 0; i < wave.length; i++) {
-			wave[i] = amplitude*((Math.random()*2.0)-1);
+			wave[i] = amplitude*((ThreadLocalRandom.current().nextDouble()*2.0)-1);
 		}
 		return wave;
 	}
 
-	/* (non-Javadoc)
-	 * @see waves.Wave#clone()
-	 */
-	@Override
-	public Object clone() {
-		return new NoiseWave(amplitude);
-	}
-	
 }

@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
  *         Copyright 2019
  *         For making a sine wave samples in a thread
  */
-public class SineWaveThread implements Callable<double[]>{
+public class SineWaveThread implements Callable<double[]> {
 
 	final SineWave sineWave;
 	final double seconds;

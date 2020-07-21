@@ -5,8 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import arrays.ConcatThread;
 import waves.Wave;
-import waves.WaveConcatThread;
 
 /**
 @author Alexander Johnston 
@@ -176,6 +176,6 @@ public class NoteSequence {
 				e.printStackTrace();
 			}
 		}
-		return WaveConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);
+		return ConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);
 	}
 }

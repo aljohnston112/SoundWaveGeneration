@@ -57,16 +57,6 @@ import waves.Wave;
  */
 public class Main {
 
-	static final int BITS_PER_SAMPLE = 16;
-
-	static final double  MAXIMUM_AMPLITUDE = (StrictMath.pow(2.0, BITS_PER_SAMPLE-1))/2.0;
-
-	static final float SAMPLES_PER_SECOND = 44100;
-
-	static final double MAXIMUM_FREQUENCY = (SAMPLES_PER_SECOND/2.0)-1.0;
-
-	static final double MIDDLE_A = 440.0;
-
 	public static void main(String[] args) {
 
 		// TODO edit and retest algorithms, envelopes, function, matrices, and polynomials packages
@@ -101,13 +91,13 @@ public class Main {
 		//testAmplitudeGenerator();
 		//testLinearAmplitudeEnvelope();
 		//testDynamics();
-		testThreeDimensionalGraphGenerator();
-		testThreeDimensionalGraph();
-		testThreeDimensionalCycle();
-		testGraphGenerator();
-		testGraph();
-		testCycle();
-		testChanseyCycle();
+		//testThreeDimensionalGraphGenerator();
+		//testThreeDimensionalGraph();
+		//testThreeDimensionalCycle();
+		//testGraphGenerator();
+		//testGraph();
+		//testCycle();
+		//testChanseyCycle();
 		//testStereoAudioLine();
 		//testMonoAudioLine();
 		//testAudioLine();
@@ -131,7 +121,7 @@ public class Main {
 		double seconds = 1.0;
 		float samplesPerSecond = 16;
 		double[] wave = sineWave.getWave(seconds, samplesPerSecond);
-		double[] waveEdge = sineWave.getWaveEdge(seconds, samplesPerSecond);
+		double[] waveEdge = sineWave.getWaveAbs(seconds, samplesPerSecond);
 
 		// Test getter methods
 		double getAmplitude = sineWave.getAmplitude();
@@ -403,8 +393,8 @@ public class Main {
 		double attack = 1; 
 		double decay = 1; 
 		double release = 1; 
-		LinearAmplitudeEnvelope linearAmplitudeEnvelope = new LinearAmplitudeEnvelope(amplitude/64, sustain, attack, decay, release, SAMPLES_PER_SECOND);
-
+		LinearAmplitudeEnvelope linearAmplitudeEnvelope = new LinearAmplitudeEnvelope(amplitude/128, sustain, attack, decay, release, SAMPLES_PER_SECOND);
+		LinearAmplitudeEnvelope linearAmplitudeEnvelope2 = new LinearAmplitudeEnvelope(0, 0, attack, decay, release, SAMPLES_PER_SECOND);
 		ArrayList<ArrayList<Object>> notes = new ArrayList<ArrayList<Object>>();
 		ArrayList<Object> notes1 = new ArrayList<Object>();
 		ArrayList<Object> notes2 = new ArrayList<Object>();
@@ -412,7 +402,10 @@ public class Main {
 		// Create a note
 		Note note = new Note(hertz, linearAmplitudeEnvelope, radians);
 		notes1.add(note);
-		note = new Note(hertz/2.0, linearAmplitudeEnvelope, radians);
+		notes1.add(note);
+		note = new Note(hertz*2.0, linearAmplitudeEnvelope2, radians);
+		notes2.add(note);
+		note = new Note(hertz*2.0, linearAmplitudeEnvelope, radians);
 		notes2.add(note);
 		notes.add(notes1);
 		notes.add(notes2);
@@ -1509,10 +1502,10 @@ public class Main {
 		ExecutorService threadRunner = Executors.newCachedThreadPool();
 
 		// Find max magnitude
-		double maxMagnitude = Array.getMaxMag(doubleArray, threadRunner);
+		double maxMagnitude = Array.mag(doubleArray, threadRunner);
 
 		// Find max amplitude
-		double maxAmplitude = Array.getMax(doubleArray, threadRunner);
+		double maxAmplitude = Array.max(doubleArray, threadRunner);
 
 		// Shutdown a thread
 		threadRunner.shutdown();
