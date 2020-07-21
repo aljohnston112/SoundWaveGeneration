@@ -8,6 +8,7 @@ import waves.SineWave;
 import waves.SquareWave;
 import waves.TriangleWave;
 import waves.Wave;
+import waves.Wave.WaveType;
 
 /**
  * @author Alexander Johnston 
@@ -15,10 +16,6 @@ import waves.Wave;
  *         A class for making amplitude oscillators
  */
 public class AmplitudeOscillator {
-
-	public enum WaveType {
-		SINE, NOISE, TRIANGLE, SQUARE, SAW
-	}
 
 	// The starting frequency of this oscillator
 	double startingFrequency;
@@ -174,7 +171,9 @@ public class AmplitudeOscillator {
 	 * @throws NullPointerException if linearAmplitudeEnvelope is null.
 	 * @throws IllegalArgumentException if samplesPerSecond is less than 1
 	 */
+	/*
 	public double[] getSample(LinearAmplitudeEnvelope linearAmplitudeEnvelope, 
+	// TODO must finish
 			WaveType waveType, float samplesPerSecond) {
 		Objects.requireNonNull(linearAmplitudeEnvelope);
 		if(samplesPerSecond < 1) {
@@ -190,4 +189,5 @@ public class AmplitudeOscillator {
 		double[] wave = (linearAmplitudeEnvelope2.getEnvelope());
 		return wave;
 	}
+	*/
 }

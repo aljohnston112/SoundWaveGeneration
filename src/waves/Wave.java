@@ -9,6 +9,10 @@ import java.util.Objects;
  */
 public abstract class Wave {
 
+	public enum WaveType {
+		SINE, NOISE, TRIANGLE, SQUARE, SAW
+	}
+	
 	// The amplitude of this NoiseWave.
 	final double amplitude;
 

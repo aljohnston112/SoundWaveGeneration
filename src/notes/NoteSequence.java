@@ -161,10 +161,8 @@ public class NoteSequence {
 	 */
 	public double[] getSample(ExecutorService threadRunner, Wave waveObject, float samplesPerSecond) {
 		ArrayList<Future<double[]>> futureChannelOfWaves = new ArrayList<Future<double[]>>();
-		Wave waveObjectCopy;
 		for(int i = 0; i < notes.size(); i++) {
-			waveObjectCopy = (Wave) waveObject.clone();
-			futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i), waveObjectCopy, samplesPerSecond)));
+			futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i), waveObject, samplesPerSecond)));
 		}
 		ArrayList<double[]> futureChannelOfWavesArrayList = new ArrayList<double[]>();
 		for(int i = 0; i < futureChannelOfWaves.size(); i++) {
@@ -176,6 +174,6 @@ public class NoteSequence {
 				e.printStackTrace();
 			}
 		}
-		return ConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);
+		return ConcatThread.concatArraysButterfly(futureChannelOfWavesArrayList, threadRunner);
 	}
 }

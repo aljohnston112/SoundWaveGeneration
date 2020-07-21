@@ -191,7 +191,7 @@ public class ThreeDimensionalNoteSequence {
 		}
 		threadRunner.shutdown();
 		try {
-			return Array.max(futureSineWaves.get(0).get(), threadRunner);
+			return Array.max(futureSineWaves.get(0).get()/*, threadRunner* TODO Stop creating objects! */);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -228,10 +228,8 @@ public class ThreeDimensionalNoteSequence {
 		ArrayList<double[]> futureChannelOfWavesArrayList = new ArrayList<double[]>();
 		for(int i = 0; i < notes.size(); i++) {
 			ArrayList<Future<double[]>> futureChannelOfWaves = new ArrayList<Future<double[]>>();
-			Wave waveObjectCopy;
 			for(int j = 0; j < notes.get(i).size(); j++) {
-				waveObjectCopy = (Wave) waveObject.clone();
-				futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i).get(j), waveObjectCopy, samplesPerSecond)));
+				futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i).get(j), waveObject, samplesPerSecond)));
 			}
 			futureChannelOfWavesArrayList.clear();
 			for(int k = 0; k < futureChannelOfWaves.size(); k++) {
@@ -247,7 +245,7 @@ public class ThreeDimensionalNoteSequence {
 				FutureTask<double[]> future = new FutureTask<double[]>(new Callable<double[]>() {
 					@Override
 					public double[] call() throws Exception {
-						return ConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);					}
+						return ConcatThread.concatArraysButterfly(futureChannelOfWavesArrayList , threadRunner);					}
 				});
 				wavesToBeAdded.add(future);
 				threadRunner.submit(future);
@@ -255,7 +253,7 @@ public class ThreeDimensionalNoteSequence {
 			}
 		}
 		
-		return AddThread.addWavesButterfly(wavesToBeAdded, threadRunner);
+		return AddThread.addArraysButterfly(wavesToBeAdded, threadRunner);
 	}
 
 }

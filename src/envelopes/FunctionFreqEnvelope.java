@@ -1,7 +1,7 @@
 package envelopes;
 
 import arrays.Array;
-import envelopes.AmplitudeOscillator.WaveType;
+import waves.Wave.WaveType;
 import function.HyperbolicSine;
 import function.Power;
 import function.Root;

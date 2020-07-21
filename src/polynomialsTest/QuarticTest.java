@@ -9,4 +9,9 @@ public class QuarticTest {
 		testQuarticConstructor();
 	}
 
+	private static void testQuarticConstructor() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

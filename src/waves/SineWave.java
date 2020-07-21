@@ -25,6 +25,17 @@ public class SineWave extends Wave {
 		this.radians = radians;
 		this.updateRadians = updateRadians;
 	}
+	
+	//TODO Test
+	/**       Copies a SineWave.
+	 * @param sineWave as the SineWave to copy.
+	 */
+	public SineWave(SineWave sineWave) {
+		super(sineWave.getAmplitude());
+		this.hertz = sineWave.getHertz();
+		this.radians = sineWave.getRadians();
+		this.updateRadians = sineWave.updateRadians;
+	}
 
 	public double getHertz() {
 		return hertz;

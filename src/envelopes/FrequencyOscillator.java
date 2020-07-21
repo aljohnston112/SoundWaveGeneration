@@ -1,6 +1,6 @@
 package envelopes;
 
-import envelopes.AmplitudeOscillator.WaveType;
+import waves.Wave.WaveType;
 import waves.SawWave;
 import waves.SineWave;
 import waves.SquareWave;

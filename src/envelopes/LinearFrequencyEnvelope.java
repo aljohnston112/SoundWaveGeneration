@@ -1,5 +1,6 @@
 package envelopes;
 
+import arrays.Array;
 import waves.SineWave;
 import waves.Wave;
 import waves.Wave.WaveType;
@@ -80,12 +81,14 @@ public class LinearFrequencyEnvelope extends Envelope{
 		double[] wave = new double[amplitudeArray.length];
 		double[] temp; 
 		double phase = 0; 
+		boolean phaseTracking = true;
 		Wave tempWave;
 		switch(waveType) {
 		case SINE: 
-			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase); 
+			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase, phaseTracking); 
 			break;
 			/*
+			 //TODO probably finish?
 		case TRIANGLE:
 			tempWave = new TriangleWave(amplitudeArray[i]*amplitude, frequencyArray[i], phase); 
 			break;
@@ -97,16 +100,19 @@ public class LinearFrequencyEnvelope extends Envelope{
 			break;
 			*/
 		default:
-			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase); 
+			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase, phaseTracking); 
 			break;
 		}
+		/*
+		 // TODO SineWave is now non-mutable
 		for(int i = 1; i < frequencyArray.length; i++) {
 			tempWave.setAmplitude(amplitudeArray[i]);
 			tempWave.setFrequency(frequencyArray[i]);
 			temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 			wave[i] = temp[0]; 
 		}
-		 return Wave.scaleWave(wave, amplitude/Wave.getMaxAmp(wave));
+		*/
+		 return Array.scale(wave, amplitude/Array.max(wave));
 	}
 	
 	/**        Creates the linearFrequencyEnvelope wave
@@ -122,13 +128,15 @@ public class LinearFrequencyEnvelope extends Envelope{
 		double[] temp; 
 		double phase = 0; 
 		Wave tempWave;
-		
+		boolean phaseTracking = true;
+
 		switch(waveType) {
 		case SINE: 
-			tempWave = new SineWave(amplitude, frequencyArray[0], phase);
+			tempWave = new SineWave(amplitude, frequencyArray[0], phase, phaseTracking);
 			
 			break;
 			/*
+			 // TODO possibly finish?
 		case TRIANGLE:
 			tempWave = new TriangleWave(amplitude, frequencyArray[i], phase); 
 			break;
@@ -140,16 +148,19 @@ public class LinearFrequencyEnvelope extends Envelope{
 			break;
 			*/
 		default:
-			tempWave = new SineWave(amplitude, frequencyArray[0], phase); 
+			tempWave = new SineWave(amplitude, frequencyArray[0], phase, phaseTracking); 
 			break;
 		}
 		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 		wave[0] = temp[0]; 
+		/*
+		 // TODO SineWave is non-mutable
 		for(int i = 1; i < frequencyArray.length; i++) {
 			temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 			wave[i] = temp[0]; 
 			tempWave.setFrequency(frequencyArray[i]);
 		}
-		 return Wave.scaleWave(wave, amplitude/Wave.getMaxAmp(wave));
+		*/
+		 return Array.scale(wave, amplitude/Array.max(wave));
 	}
 }

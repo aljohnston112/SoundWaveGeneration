@@ -173,10 +173,14 @@ public class Note {
 			double release = seconds/3.0;
 			linearAmplitudeEnvelope  = new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
 		}
+		/*
+		 // TODO SINEWAVE is immutable
 		waveObject.setAmplitude(this.amplitude);
 		waveObject.setFrequency(this.hertz);
 		waveObject.setPhase(this.radians);
+		*/
 		wave = waveObject.getWave(linearAmplitudeEnvelope.getEnvelope(), samplesPerSecond); 
 		return wave;
 	}
+	
 }

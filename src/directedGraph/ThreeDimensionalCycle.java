@@ -37,7 +37,7 @@ public class ThreeDimensionalCycle {
 	 * @param loops as the number of loops to loop
 	 */
 	public ThreeDimensionalCycle(Object[][] nodes, int loops){
-		int columns = Array.getNumberOfColumns(nodes);
+		int columns = nodes[0].length; //Array.getNumberOfColumns(nodes);
 		this.nodes = new Object[nodes.length][];
 		for(int i = 0; i < nodes.length; i++) {
 			this.nodes[i] = new Object[columns];
@@ -81,7 +81,7 @@ public class ThreeDimensionalCycle {
 	 * @param loopHomology as whether or not the loops will always equal loops
 	 */
 	public ThreeDimensionalCycle(Object[][] nodes, int loops, boolean loopHomology){
-		int columns = Array.getNumberOfColumns(nodes);
+		int columns = nodes[0].length; //Array.getNumberOfColumns(nodes);
 		this.nodes = new Object[nodes.length][];
 		for(int i = 0; i < nodes.length; i++) {
 			this.nodes[i] = new Object[columns];

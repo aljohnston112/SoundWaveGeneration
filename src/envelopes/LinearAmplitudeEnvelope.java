@@ -3,7 +3,7 @@ package envelopes;
 import java.util.Objects;
 
 import arrays.Array;
-import envelopes.AmplitudeOscillator.WaveType;
+import waves.Wave.WaveType;
 import waves.Wave;
 
 /**
