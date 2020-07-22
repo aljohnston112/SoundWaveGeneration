@@ -102,10 +102,18 @@ public class TriangleWave extends Wave {
 			waveO[i] = wave[i+st];
 		}
 		if(seconds > 1.0/this.hertz) {
+			if(Array.mag(waveO) != 0) {
 			return Array.scale(waveO, amplitude/Array.mag(waveO));
+			} else {
+				return waveO;
+			}
 		} else {
 			double[] t = getWaveNS(1.0/this.hertz, samplesPerSecond);
+			if(Array.mag(waveO) != 0) {
 			return Array.scale(waveO, amplitude/Array.mag(t));
+			} else {
+				return waveO;
+			}
 		}
 	}
 	

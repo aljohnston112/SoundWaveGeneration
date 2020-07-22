@@ -3,6 +3,7 @@ package envelopesTest;
 import java.util.ArrayList;
 import java.util.List;
 
+import envelopes.AmplitudeOscillator;
 import envelopes.LinearAmplitudeEnvelope;
 
 import javafx.application.Application;
@@ -14,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import waves.SineWave;
+import waves.Wave.WaveType;
 
 public class LinearAmplitudeEnvelopeTest extends Application {
 
@@ -30,15 +32,17 @@ public class LinearAmplitudeEnvelopeTest extends Application {
 	double deltaX;
 	static List<double[]> data = new ArrayList<>();
 	
+	
+	
 	public static void main(String[] args) {
 		//testLinearAmplitudeEnvelopeConstructor();
-		//testAddTremoloSwell();
+		testAddTremoloSwell();
 		//testAddTremoloSwellToAttack();
 		//testAddTremoloSwellToDecay();
 		//testAddTremoloSwellToRelease();
 		//testAddTremoloSwellToAttackAndDecay();
 		//testAddTremoloSwellToAttackAndRelease();
-		testAddTremoloSwellToDecayAndRelease();
+		//testAddTremoloSwellToDecayAndRelease();
 		//testAddTremolo();
 		//testAddTremoloToAttack();
 		//testAddTremoloToDecay();
@@ -46,7 +50,45 @@ public class LinearAmplitudeEnvelopeTest extends Application {
 		//testAddTremoloToAttackAndDecay();
 		//testAddTremoloToAttackAndRelease();
 		//testAddTremoloToDecayAndRelease();
+		//testAddAmplitudeOscillator();
 		launch(args);
+	}
+
+	private static void testAddAmplitudeOscillator() {
+		//addAmplitudeOscillator(AmplitudeOscillator amplitudeOscillator, WaveType waveType, float samplesPerSecond)
+
+		System.out.println("Creating a linear amplitude envelope with...");
+		System.out.println("Amplitude of 1...");
+		System.out.println("Sustain of 2...");
+		System.out.println("Attack of 1...");
+		System.out.println("Decay of 2...");
+		System.out.println("Release of 1...");
+		
+		// Create a linear amplitude envelope
+		double amplitude = 1.0; 
+		double sustain = 2.0; 
+		double attack = 5.0; 
+		double decay = 5.0; 
+		double release = 5.0; 
+		float samplesPerSecond = (float) Math.pow(2.0, 5);
+		LinearAmplitudeEnvelope linearAmplitudeEnvelope = new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
+		
+		System.out.println("Constructing AmplitudeOscillator with...");
+		System.out.println("Starting frequency of 1...");
+		System.out.println("Ending frequency of 0.1...");
+		System.out.println("Starting amplitude width of 10...");
+		System.out.println("Ending amplitude width of 20...");
+		System.out.println("And phase of 0...");
+		double startingFrequency = 1;
+		double endingFrequency = 0.1;
+		double startingAmplitudeWidth = 0.1;
+		double endingAmplitudeWidth = 0.2;
+		double radians = Math.PI / 2.0;
+		AmplitudeOscillator amplitudeOscillator = new AmplitudeOscillator(startingFrequency, endingFrequency, startingAmplitudeWidth,
+				endingAmplitudeWidth, radians);
+		WaveType waveType = WaveType.SINE;
+		linearAmplitudeEnvelope.addAmplitudeOscillator(amplitudeOscillator, waveType, samplesPerSecond);
+		data.add(linearAmplitudeEnvelope.getEnvelope());		
 	}
 
 	private static void testAddTremoloSwell() {
@@ -78,7 +120,7 @@ public class LinearAmplitudeEnvelopeTest extends Application {
 		double release = 1.0; 
 		float samplesPerSecond = 120;
 		LinearAmplitudeEnvelope linearAmplitudeEnvelope = new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
-		
+		linearAmplitudeEnvelope.setAttackDecayLoops(2);
 		System.out.println("Adding sine wave swell to linear amplitude envelope...");
 		// Add tremolo swell to linear amplitude envelope
 		
@@ -336,7 +378,7 @@ public class LinearAmplitudeEnvelopeTest extends Application {
 		
 		// Create a linear amplitude envelope
 		double amplitude = 1.0; 
-		double sustain = 2.0; 
+		double sustain = 1.0; 
 		double attack = 1.0; 
 		double decay = 0.0; 
 		double release = 1.0; 

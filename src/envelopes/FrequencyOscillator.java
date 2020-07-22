@@ -88,8 +88,6 @@ public class FrequencyOscillator {
 			temp = waveObject.getWave(1.0/samplesPerSecond, samplesPerSecond);
 			wave[i] = temp[0];
 			radians += ((2.0*Math.PI)/((samplesPerSecond/((startingFrequency-(frequencySlope*(i+1)))))));// - ((2.0*Math.PI)/((sr/((sf-(fs*(i+1))))))) -((2.0*Math.PI)/((sr/((sf-(fs*(i))))))); 
-			//p += ((2.0*Math.PI*(((sf-(fs*(i+1))))))/sr);
-			//p -= ((2.0*Math.PI)*((((sf-(fs*(i+1)))-(sr/((sf-(fs*(i))))))))/sr);
 		}
 		switch(waveType) {
 		case SINE: 

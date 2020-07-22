@@ -1,7 +1,12 @@
 package envelopes;
 
+import java.util.Objects;
+
 import arrays.Array;
+import waves.SawWave;
 import waves.SineWave;
+import waves.SquareWave;
+import waves.TriangleWave;
 import waves.Wave;
 import waves.Wave.WaveType;
 
@@ -10,7 +15,7 @@ import waves.Wave.WaveType;
         Copyright 2019 
         A class for making frequency envelopes
 */
-public class LinearFrequencyEnvelope extends Envelope{
+public class LinearFrequencyEnvelope extends Envelope {
 
 	// The frequency at the beginning of the attack
 	double firstFrequency;
@@ -33,8 +38,22 @@ public class LinearFrequencyEnvelope extends Envelope{
 	 * @param thirdFrequency as the frequency at the beginning of the release
 	 * @param lastFrequency as the frequency at the end of the release
 	 */
-	public LinearFrequencyEnvelope(double attack, double decay, double release, double firstFrequency, double secondFrequency, double thirdFrequency, double lastFrequency, double samplesPerSecond) {
-
+	public LinearFrequencyEnvelope(double attack, double decay, double release, 
+			double firstFrequency, double secondFrequency, double thirdFrequency, double lastFrequency, double samplesPerSecond) {
+		if(attack < 0) {
+			throw new IllegalArgumentException("attack passed to LinearFrequencyEnvelope() must be at least 0");
+		}
+		if(decay < 0) {
+			throw new IllegalArgumentException("decay passed to LinearFrequencyEnvelope() must be at least 0");
+		}
+		if(release < 0) {
+			throw new IllegalArgumentException("release passed to LinearFrequencyEnvelope() must be at least 0");	
+		}
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "LinearAmplitudeEnvelope() must be greater than 0");	
+		}
+		// Invariants secured
 		this.attack = attack;
 		this.release = release;
 		this.decay = decay;
@@ -75,92 +94,106 @@ public class LinearFrequencyEnvelope extends Envelope{
 	 * @param  samplesPerSecond as the sample rate
 	 * @return an array of sound representing this FrequencyEnvelope with AmplitudeEnvelope
 	 */
-	public double[] getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope(LinearAmplitudeEnvelope linearAmplitudeEnvelope, double amplitude, WaveType waveType, float samplesPerSecond){
+	public double[] getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope(
+			LinearAmplitudeEnvelope linearAmplitudeEnvelope, double amplitude, WaveType waveType, float samplesPerSecond){
+		Objects.requireNonNull(linearAmplitudeEnvelope);
+		if (samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope() must be greater than 0");
+		}
+		if (waveType == null) {
+			System.out.println("waveType passed to getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope() is null. Defaulting to SINE.");
+		}
+		// Invariants secured
 		double[] amplitudeArray = linearAmplitudeEnvelope.getEnvelope();
 		double[] frequencyArray = this.getEnvelope();
 		double[] wave = new double[amplitudeArray.length];
 		double[] temp; 
-		double phase = 0; 
+		double radians = 0; 
 		boolean phaseTracking = true;
 		Wave tempWave;
-		switch(waveType) {
-		case SINE: 
-			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase, phaseTracking); 
-			break;
-			/*
-			 //TODO probably finish?
-		case TRIANGLE:
-			tempWave = new TriangleWave(amplitudeArray[i]*amplitude, frequencyArray[i], phase); 
-			break;
-		case SAW:
-			tempWave = new SawWave(amplitudeArray[i]*amplitude, frequencyArray[i], phase); 
-			break;
-		case SQUARE:
-			tempWave = new SquareWave(amplitudeArray[i]*amplitude, frequencyArray[i], phase); 
-			break;
-			*/
-		default:
-			tempWave = new SineWave(amplitudeArray[0]*amplitude, frequencyArray[0], phase, phaseTracking); 
-			break;
-		}
-		/*
-		 // TODO SineWave is now non-mutable
-		for(int i = 1; i < frequencyArray.length; i++) {
-			tempWave.setAmplitude(amplitudeArray[i]);
-			tempWave.setFrequency(frequencyArray[i]);
+		for(int i = 0; i < frequencyArray.length; i++) {
+			switch(waveType) {
+			case SINE: 
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			case TRIANGLE:
+				tempWave = new TriangleWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			case SAW:
+				tempWave = new SawWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			case SQUARE:
+				tempWave = new SquareWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			default:
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			}
 			temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 			wave[i] = temp[0]; 
+			radians += ((2.0 * Math.PI) / ((samplesPerSecond / (frequencyArray[i]))));
 		}
-		*/
 		 return Array.scale(wave, amplitude/Array.max(wave));
 	}
 	
 	/**        Creates the linearFrequencyEnvelope wave
 	 * @param  amplitude as the amplitude of the wave
-	 * @param  time as the time
+	 * @param  seconds as the time
 	 * @param  waveType as the WaveType of this oscillator
 	 * @param  samplesPerSecond as the sample rate
 	 * @return an array of sound representing this FrequencyEnvelope
 	 */
-	public double[] getWave(double amplitude, double time, WaveType waveType, float samplesPerSecond){
+	public double[] getWave(double amplitude, double seconds, WaveType waveType, float samplesPerSecond){
+		if (samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope() must be greater than 0");
+		}
+		if (waveType == null) {
+			System.out.println("waveType passed to getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope() is null. Defaulting to SINE.");
+		}
+		if (seconds < 0) {
+			throw new IllegalArgumentException("seconds passed to getLinearFrequencyEnvelopeWithLinearAmplitudeEnvelope() must be at least 0");
+		}
+		// Invariants secured
 		double[] frequencyArray = this.getEnvelope();
-		double[] wave = new double[(int) Math.round((time*samplesPerSecond))];
+		double[] wave = new double[(int) Math.round((seconds*samplesPerSecond))];
 		double[] temp; 
-		double phase = 0; 
+		double radians = 0; 
 		Wave tempWave;
 		boolean phaseTracking = true;
-
-		switch(waveType) {
-		case SINE: 
-			tempWave = new SineWave(amplitude, frequencyArray[0], phase, phaseTracking);
-			
-			break;
-			/*
-			 // TODO possibly finish?
-		case TRIANGLE:
-			tempWave = new TriangleWave(amplitude, frequencyArray[i], phase); 
-			break;
-		case SAW:
-			tempWave = new SawWave(amplitude, frequencyArray[i], phase); 
-			break;
-		case SQUARE:
-			tempWave = new SquareWave(amplitude, frequencyArray[i], phase); 
-			break;
-			*/
-		default:
-			tempWave = new SineWave(amplitude, frequencyArray[0], phase, phaseTracking); 
-			break;
-		}
-		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
-		wave[0] = temp[0]; 
-		/*
-		 // TODO SineWave is non-mutable
-		for(int i = 1; i < frequencyArray.length; i++) {
+		for(int i = 0; i < frequencyArray.length; i++) {
+			switch(waveType) {
+			case SINE: 
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, phaseTracking);
+				break;
+			case TRIANGLE:
+				tempWave = new TriangleWave(amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			case SAW:
+				tempWave = new SawWave(amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			case SQUARE:
+				tempWave = new SquareWave(amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			default:
+				tempWave = new SineWave(amplitude, frequencyArray[i], radians, phaseTracking); 
+				break;
+			}
 			temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
 			wave[i] = temp[0]; 
-			tempWave.setFrequency(frequencyArray[i]);
+			radians += ((2.0 * Math.PI) / ((samplesPerSecond / (frequencyArray[i]))));
 		}
-		*/
 		 return Array.scale(wave, amplitude/Array.max(wave));
 	}
+	
+	/**       // TODO
+	 * @param frequencyOscillator
+	 * @param waveType
+	 * @param samplesPerSecond
+	 */
+	public void addFrequencyOscillator(FrequencyOscillator frequencyOscillator, WaveType waveType, 
+			float samplesPerSecond) {
+		
+	}
+	
+	
 }

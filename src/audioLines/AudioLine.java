@@ -75,5 +75,9 @@ abstract public class AudioLine {
 		sourceDataLine.write(wave, 0, wave.length);
 		sourceDataLine.drain();
 	}
+	
+	public String toString() {
+		return sourceDataLine.getFormat().toString();
+	}
 
 }
