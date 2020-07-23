@@ -8,143 +8,152 @@ package rhythm;
 public class Tempo {
 
 	// The time interval of the quarter note in seconds
-	private double quarterNote;
-
+	private double beatsPerMinute;
+	
 	public double[] noteTimes = new double[16];
 
 	/**
 	 * @param beatsPerMinute The beats per minute of the tempo
 	 */
 	public Tempo(double beatsPerMinute){
-		this.quarterNote = (60.0/beatsPerMinute);
-		noteTimes[15] = this.getWhole();
-		noteTimes[14] = this.getTwoThirds();
-		noteTimes[13] = this.getHalf();
-		noteTimes[12] = this.getThird();
-		noteTimes[11] = this.getQuarter();
-		noteTimes[10] = this.getSixth();
-		noteTimes[9] = this.getEighth();
-		noteTimes[8] = this.getTwelth();
-		noteTimes[7] = this.getSixteenth();
-		noteTimes[6] = this.getTwentyFourth();
-		noteTimes[5] = this.getThirtySecond();
-		noteTimes[4] = this.getFortyEighth();
-		noteTimes[3] = this.getSixtyFourth();
-		noteTimes[2] = this.getNinetySixth();
-		noteTimes[1] = this.getOneTwentyEighth();
-		noteTimes[0] = this.getOneNinetySecond();
+		this.beatsPerMinute = beatsPerMinute;
+		double quarterNote = (60.0/beatsPerMinute);
+		noteTimes[15] = quarterNote*4;
+		noteTimes[14] = quarterNote*8.0/3.0;
+		noteTimes[13] = quarterNote*2.0;
+		noteTimes[12] = quarterNote*4.0/3.0;
+		noteTimes[11] = quarterNote;
+		noteTimes[10] = quarterNote*4.0/6.0;
+		noteTimes[9] = quarterNote/2.0;
+		noteTimes[8] = quarterNote*4.0/12.0;
+		noteTimes[7] = quarterNote/4.0;
+		noteTimes[6] = quarterNote*4.0/24.0;
+		noteTimes[5] = quarterNote/8.0;
+		noteTimes[4] = quarterNote*4.0/48.0;
+		noteTimes[3] = quarterNote/16.0;
+		noteTimes[2] = quarterNote*4.0/96.0;
+		noteTimes[1] = quarterNote/32.0;
+		noteTimes[0] = quarterNote*4.0/192.0;
 	}
 
 	/**
 	 * @return The time interval of the whole note in seconds
 	 */
 	public double getWhole(){
-		return quarterNote*4;
+		return noteTimes[15];
 	}
 
 	/**
 	 * @return The time interval of the two-thirds note in seconds
 	 */
 	public double getTwoThirds(){
-		return quarterNote*8.0/3.0;
+		return noteTimes[14];
 	}
 
 	/**
 	 * @return The time interval of the half note in seconds
 	 */
 	public double getHalf(){
-		return quarterNote*2.0;
+		return noteTimes[13];
 	}
 
 	/**
 	 * @return The time interval of the third note in seconds
 	 */
 	public double getThird(){
-		return quarterNote*4.0/3.0;
+		return noteTimes[12];
 	}
 
 	/**
 	 * @return The time interval of the quarter note in seconds
 	 */
 	public double getQuarter(){
-		return quarterNote;
+		return noteTimes[11];
 	}
 
 	/**
 	 * @return The time interval of the sixth note in seconds
 	 */
 	public double getSixth(){
-		return quarterNote*4.0/6.0;
+		return noteTimes[10];
 	}
 
 	/**
 	 * @return The time interval of the eighth note in seconds
 	 */
 	public double getEighth(){
-		return quarterNote/2.0;
+		return noteTimes[9];
 	}
 
 	/**
 	 * @return The time interval of the twelfth note in seconds
 	 */
 	public double getTwelth(){
-		return quarterNote*4.0/12.0;
+		return noteTimes[8];
 	}
 
 	/**
 	 * @return The time interval of the sixteenth note in seconds
 	 */
 	public double getSixteenth(){
-		return quarterNote/4.0;
+		return noteTimes[7];
 	}
 
 	/**
 	 * @return The time interval of the twenty-fourth note in seconds
 	 */
 	public double getTwentyFourth(){
-		return quarterNote*4.0/24.0;
+		return noteTimes[6];
 	}
 
 	/**
 	 * @return The time interval of the thirty-second note in seconds
 	 */
 	public double getThirtySecond(){
-		return quarterNote/8.0;
+		return noteTimes[5];
 	}
 
 	/**
 	 * @return The time interval of the forty-eighth note in seconds
 	 */
 	public double getFortyEighth(){
-		return quarterNote*4.0/48.0;
+		return noteTimes[4];
 	}
 
 	/**
 	 * @return The time interval of the sixty-fourth note in seconds
 	 */
 	public double getSixtyFourth(){
-		return quarterNote/16.0;
+		return noteTimes[3];
 	}
 
 	/**
 	 * @return The time interval of the ninety-sixth note in seconds
 	 */
 	public double getNinetySixth(){
-		return quarterNote*4.0/96.0;
+		return noteTimes[2];
 	}
 
 	/**
 	 * @return The time interval of the one-hundred-twenty-eighth note in seconds
 	 */
 	public double getOneTwentyEighth(){
-		return quarterNote/32.0;
+		return noteTimes[1];
 	}
 
 	/**
 	 * @return The time interval of the one-hundred-ninety-second note in seconds
 	 */
 	public double getOneNinetySecond(){
-		return quarterNote*4.0/192.0;
+		return noteTimes[0];
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Tempo: ");
+		sb.append(beatsPerMinute);
+		sb.append("bpm");
+		return sb.toString();
+	}
+	
 }
