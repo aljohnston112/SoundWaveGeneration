@@ -23,7 +23,8 @@ public class AdditiveTimeSignature {
 		this.beatsPerBar = beatsPerBar;
 	}
 
-	/**        Gets an array of time values representing this time signature
+	/**        Gets an array of time values representing this time signature.
+	 *         Every change in bar will be proceeded by a 0.
 	 * @param  tempo As the tempo
 	 * @param  bars As the number of bars
 	 * @param  beats As the number of beats after the bars
@@ -35,11 +36,30 @@ public class AdditiveTimeSignature {
 		for(int i = 0; i < this.beatsPerBar.length; i++) {
 			beatsPerBar += this.beatsPerBar[i];
 		}
-		double[] time = new double[(bars*beatsPerBar) + (beats)];
+		double[] time = new double[(bars*beatsPerBar) + (beats) + (int)(Math.round((bars*beatsPerBar)/beatUnit))];
 		for(int i = 0; i < time.length; i++) {
 			time[i] = beatUnitTime;
+			if(i%beatUnit == 0) {
+				i++;
+				time[i] = 0;
+			}
 		}
 		return time;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Additive Time Signature: ");
+		sb.append("(");
+		for(int bpb : beatsPerBar) {
+		sb.append(bpb);
+		sb.append(" + ");
+		}
+		sb.delete(sb.length()-3, sb.length());
+		
+		sb.append(")/");
+		sb.append(beatUnit);
+		return sb.toString();
+	}
+	
 }

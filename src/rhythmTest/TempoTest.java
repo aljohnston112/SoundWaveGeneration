@@ -4,8 +4,6 @@ import rhythm.Tempo;
 
 public class TempoTest {
 
-	
-	
 	public static void main(String[] args) {
 		//testConstructor();
 		testGetters();
