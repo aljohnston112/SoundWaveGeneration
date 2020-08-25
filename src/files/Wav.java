@@ -14,7 +14,7 @@ import arrays.Array;
 
 public class Wav {
 
-	void writeWav(File out, float samplesPerSecond, int bitsPerSample, int channels, double[] data) {
+	public static void writeWav(File out, float samplesPerSecond, int bitsPerSample, int channels, double[] data) {
 		ByteBuffer bb = null;
 		if(bitsPerSample == 16) {
 			short[] dataS = Array.doubleToShort(data);

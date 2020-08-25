@@ -19,7 +19,7 @@ public class SineWaveThread implements Callable<double[]> {
 	 * @param seconds as the length of the sample
 	 * @param samplesPerSecond as the sample rate
 	 */
-	SineWaveThread(SineWave sineWave, double seconds, float samplesPerSecond) {
+	public SineWaveThread(SineWave sineWave, double seconds, float samplesPerSecond) {
 		this.sineWave = sineWave;
 		this.seconds = seconds;
 		this.samplesPerSecond = samplesPerSecond;

@@ -76,6 +76,12 @@ abstract public class AudioLine {
 		sourceDataLine.drain();
 	}
 	
+	public void close() {
+		if(sourceDataLine != null & sourceDataLine.isOpen()) {
+			sourceDataLine.close();
+		}
+	}
+	
 	public String toString() {
 		return sourceDataLine.getFormat().toString();
 	}

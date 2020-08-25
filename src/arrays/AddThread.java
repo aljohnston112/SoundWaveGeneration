@@ -1,6 +1,7 @@
 package arrays;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -39,7 +40,7 @@ public class AddThread implements Callable<double[]> {
 	 * @param  threadRunner as the ExecutorService to run the array addition threads
 	 * @return The addition of all the generated sine arrays together represented as amplitude over time
 	 */
-	public static double[] addArraysButterfly(ArrayList<Future<double[]>> futureArrays, ExecutorService threadRunner) {
+	public static double[] addArraysButterfly(List<Future<double[]>> futureArrays, ExecutorService threadRunner) {
 		double[] array1;
 		double[] array2;
 		if(futureArrays.size() == 0) {
