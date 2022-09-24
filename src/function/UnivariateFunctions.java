@@ -45,23 +45,23 @@ public class UnivariateFunctions extends UnivariateFunction{
 			if(i == 0) {
 				o = uf[i].fun(in);
 			} else {
-				switch(ooo[i-1]) {
-				case ADD:{
-					o+= uf[i].fun(in);
-					break;
-				}
-				case SUB:{
-					o-= uf[i].fun(in);
-					break;
-				}
-				case MUL:{
-					o*= uf[i].fun(in);
-					break;
-				}
-				case DIV:{
-					o/= uf[i].fun(in);
-					break;
-				}
+				switch (ooo[i - 1]) {
+					case ADD -> {
+						o += uf[i].fun(in);
+						break;
+					}
+					case SUB -> {
+						o -= uf[i].fun(in);
+						break;
+					}
+					case MUL -> {
+						o *= uf[i].fun(in);
+						break;
+					}
+					case DIV -> {
+						o /= uf[i].fun(in);
+						break;
+					}
 				}
 			}
 		}

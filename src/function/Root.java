@@ -12,9 +12,9 @@ import polynomials.Polynomial;
 public class Root extends UnivariateFunction {
 
 	// a*pow(x, 1.0/root)+b
-	private double root;
-	private double a;
-	private double b;
+	final private double root;
+	final private double a;
+	final private double b;
 	
 	/**       Creates a root function with the form a*pow(x, 1.0/root)+b
 	 * @param root The root to take

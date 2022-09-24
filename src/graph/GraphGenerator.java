@@ -60,7 +60,7 @@ public class GraphGenerator {
 			chanseyObject = new ChanseyCycle(nodes, probabilities, 0);
 		} catch (Exception e) {
 			e.printStackTrace();
-		};
+		}
 		return chanseyObject;
 	}
 

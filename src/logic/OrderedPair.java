@@ -37,7 +37,7 @@ public class OrderedPair {
 	}
 	
 	public boolean equals(Object op) {
-		return (this.x.equals(((OrderedPair)op).x) && this.y.equals(((OrderedPair)op).y)) ? true : false;
+		return this.x.equals(((OrderedPair) op).x) && this.y.equals(((OrderedPair) op).y);
 	}
 
 }

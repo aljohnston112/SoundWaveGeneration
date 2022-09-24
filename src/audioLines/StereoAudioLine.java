@@ -5,22 +5,21 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 
 import arrays.Array;
-import waves.Wave;
 
 /**
  * @author Alexander Johnston
- *         Copyright 2019
- *         A class for creating stereo audio lines
- *         Sample order goes LRLRLRLR
+ * @since  Copyright 2019
+ *         A class for creating stereo audio lines.
+ *         Sample order goes LRLR.
  */
 public class StereoAudioLine extends AudioLine {
 
 	// The number of channels in the audio line
 	final static int CHANNELS = 2;
 
-	/**       Creates a stereo audio line
-	 * @param samplesPerSecond Sample rate
-	 * @param bitsPerSample Bit rate
+	/**       Creates a stereo audio line.
+	 * @param samplesPerSecond Sample rate.
+	 * @param bitsPerSample Bit rate.
 	 */
 	public StereoAudioLine(float samplesPerSecond, int bitsPerSample) {
 
@@ -37,43 +36,43 @@ public class StereoAudioLine extends AudioLine {
 		}
 	}
 
-	/**       Plays a wave on this line
-	 * @param wave is the wave to be played on this line
+	/**       Plays a wave on this line.
+	 * @param wave The wave to be played on this line.
 	 */
 	private void play(double[] wave) {
 		if(audioFormat.getSampleSizeInBits() == 16) {
 			play(Array.doubleToShort(wave));
-		}else if(audioFormat.getSampleSizeInBits() == 8) {
+		} else if(audioFormat.getSampleSizeInBits() == 8) {
 			play(Array.doubleToByte(wave));
 		}
 	}
 
-	/**       Plays a stereo wave on this channel given the left and right channels
-	 * @param leftWave is the left wave to be played on this line
-	 * @param rightWave is the right wave to be played on this line
+	/**       Plays a stereo wave on this channel given the left and right channels.
+	 * @param leftWave is the left wave to be played on this line.
+	 * @param rightWave is the right wave to be played on this line.
 	 */
 	public void play(double[] leftWave, double[] rightWave) {
-		double[] shorstWave;
+		double[] shortWave;
 		double[] zeroWave;
 		double[] leftRightWave;
 		if(leftWave.length < rightWave.length) {
 			zeroWave = new double[rightWave.length-leftWave.length];
-			shorstWave = Wave.concatWave(leftWave, zeroWave);
-			leftRightWave = stereoizeWaves(shorstWave, rightWave);
+			shortWave = Array.concat(leftWave, zeroWave);
+			leftRightWave = stereoizeWaves(shortWave, rightWave);
 		} else if(leftWave.length > rightWave.length) {
 			zeroWave = new double[leftWave.length-rightWave.length];
-			shorstWave = Wave.concatWave(rightWave, zeroWave);
-			leftRightWave = stereoizeWaves(leftWave, shorstWave);
+			shortWave = Array.concat(rightWave, zeroWave);
+			leftRightWave = stereoizeWaves(leftWave, shortWave);
 		} else {
 			leftRightWave = stereoizeWaves(leftWave, rightWave);
 		}
 		play(leftRightWave);
 	}
 
-	/**        Combines two wave to stereo
-	 * @param  leftWave Left wave
-	 * @param  rightWave Right wave
-	 * @return A stereo wave suitable for play back
+	/**        Combines two waves to stereo.
+	 * @param  leftWave Left wave.
+	 * @param  rightWave Right wave.
+	 * @return A stereo wave suitable for play back.
 	 */
 	private double[] stereoizeWaves(double[] leftWave, double[] rightWave) {
 		double[] leftRightWave = new double[leftWave.length+rightWave.length];

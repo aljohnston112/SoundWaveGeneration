@@ -10,26 +10,35 @@ package algorithms;
  */
 public class EqualLoudnessContour {
 
+	private static final double RA = ((Math.pow(12194, 2)*Math.pow(1000, 4))/
+			((Math.pow(1000, 2) + Math.pow(20.6, 2))*
+					(Math.pow((Math.pow(1000, 2)+Math.pow(107.7, 2))*
+							(Math.pow(1000, 2)+Math.pow(737.9, 2))*
+							(Math.pow(1000, 2)+Math.pow(12194, 2)), 0.5))));
+	
+	private static final double SUB_A = ((Math.pow(12194, 2)*Math.pow(20000, 4))/
+			((Math.pow(20000, 2) + Math.pow(20.6, 2))*
+					(Math.pow((Math.pow(20000, 2)+Math.pow(107.7, 2))*
+							(Math.pow(20000, 2)+Math.pow(737.9, 2))*
+							(Math.pow(20000, 2)+Math.pow(12194, 2)), 0.5))));
+	
+	private static final double DIV_A = 5.16;
+	
 	/**        A-weighted transfer function
 	 * @param  f The frequency whose loudness is to be normalized
 	 * @return The normalized amplitude of frequency
 	 */
 	static public double getGainAWeight(double f) {
-		ComplexNumber fn = new ComplexNumber(0, f*2.0*StrictMath.PI);
 		// Normalization coefficient
-		double k= 7397050000.0;
-		double num = ComplexNumber.power(fn, 4).getMagnitude();
-		double den = ComplexNumber.multiply(
-				ComplexNumber.multiply(
-						ComplexNumber.multiply(
-								ComplexNumber.power(
-										ComplexNumber.add(fn, 129.4), 2), 
-								ComplexNumber.add(fn, 676.7)), 
-						ComplexNumber.add(fn, 4636.0)), 
-				ComplexNumber.power(
-						ComplexNumber.add(fn, 76655.0), 2)).getMagnitude();
-		return  1.0- k*num/den;
+		return (f > 1000) ? (20*Math.log(((Math.pow(12194, 2)*Math.pow(f, 4))/
+				((Math.pow(f, 2) + Math.pow(20.6, 2))*
+						(Math.pow((Math.pow(f, 2)+Math.pow(107.7, 2))*
+								(Math.pow(f, 2)+Math.pow(737.9, 2))*
+								(Math.pow(f, 2)+Math.pow(12194, 2)), 0.5)))))-(20*Math.log(RA))-SUB_A)/DIV_A :
+									RA;
 	}
+	
+	
 
 	/**        B-weighted transfer function
 	 * @param  f The frequency whose loudness is to be normalized

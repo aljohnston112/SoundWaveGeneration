@@ -47,8 +47,8 @@ public class LinearAmplitudeEnvelopeGenerator {
 	public void bad(double bias) {
 		amplitudeGenerator.bad(bias);
 		sustainGenerator.bad(bias);
-		for(int i = 0; i < timeGenerators.length; i++) {
-			timeGenerators[i].bad(bias);
+		for (TimeGenerator timeGenerator : timeGenerators) {
+			timeGenerator.bad(bias);
 		}
 		envelopeChoice.bad(bias);
 		differenceChoice.bad(bias);
@@ -157,88 +157,85 @@ public class LinearAmplitudeEnvelopeGenerator {
 
 		//TODO add the ChanseyCycle
 		int envelopeChoice = 2; //  (int)(Math.round(Math.random()*2));
-		switch(envelopeChoice) {
-		case 2:
-			// ADR 
+		if (envelopeChoice == 2) {// ADR
 			double firstTimeChoice = 0;
 			double secondTimeChoice = 0;
 			double thirdTimeChoice = 0;
 
-			switch((int)differenceChoice.fun().get(0)) {
-			case 0:
-				// Attack, decay and release are all possibly different
-				if((int)totalLengthChoice.fun().get(0) == 0) {
-					firstTimeChoice = timeGenerators[0].getNextTime();
-					secondTimeChoice = timeGenerators[3].getNextTime();
-					thirdTimeChoice = timeGenerators[5].getNextTime();
-				} else {
-					firstTimeChoice = timeGenerators[1].getNextTime();
+			switch ((int) differenceChoice.fun().get(0)) {
+				case 0:
+					// Attack, decay and release are all possibly different
+					if ((int) totalLengthChoice.fun().get(0) == 0) {
+						firstTimeChoice = timeGenerators[0].getNextTime();
+						secondTimeChoice = timeGenerators[3].getNextTime();
+						thirdTimeChoice = timeGenerators[5].getNextTime();
+					} else {
+						firstTimeChoice = timeGenerators[1].getNextTime();
+						secondTimeChoice = timeGenerators[2].getNextTime();
+						thirdTimeChoice = timeGenerators[4].getNextTime();
+					}
+					break;
+				case 1:
+					// Attack, decay and release where 2 are possibly the same
+					if ((int) totalLengthChoice2.fun().get(0) == 0) {
+						firstTimeChoice = timeGenerators[0].getNextTime();
+						secondTimeChoice = timeGenerators[4].getNextTime();
+						thirdTimeChoice = timeGenerators[4].getNextTime();
+					} else {
+						firstTimeChoice = timeGenerators[1].getNextTime();
+						secondTimeChoice = timeGenerators[3].getNextTime();
+						thirdTimeChoice = timeGenerators[3].getNextTime();
+					}
+					break;
+				case 2:
+					// Attack, decay and release where all 3 are possibly the same
+					firstTimeChoice = timeGenerators[2].getNextTime();
 					secondTimeChoice = timeGenerators[2].getNextTime();
-					thirdTimeChoice = timeGenerators[4].getNextTime();
-				}
-				break;
-			case 1: 
-				// Attack, decay and release where 2 are possibly the same
-				if((int)totalLengthChoice2.fun().get(0) == 0) {
-					firstTimeChoice = timeGenerators[0].getNextTime();
-					secondTimeChoice = timeGenerators[4].getNextTime();
-					thirdTimeChoice = timeGenerators[4].getNextTime();
-				} else {
-					firstTimeChoice = timeGenerators[1].getNextTime();
-					secondTimeChoice = timeGenerators[3].getNextTime();
-					thirdTimeChoice = timeGenerators[3].getNextTime();
-				}
-				break;
-			case 2: 
-				// Attack, decay and release where all 3 are possibly the same
-				firstTimeChoice = timeGenerators[2].getNextTime();
-				secondTimeChoice = timeGenerators[2].getNextTime();
-				thirdTimeChoice = timeGenerators[2].getNextTime();
-				break;
+					thirdTimeChoice = timeGenerators[2].getNextTime();
+					break;
 			}
 			int decayReleaseChoice = (int) this.decayReleaseChoice.fun().get(0);
-			switch((int)attackLengthChoice.fun().get(0)) {
-			case 0:
-				attack = firstTimeChoice;
-				switch(decayReleaseChoice) {
-				case 0:
-					decay = secondTimeChoice;
-					release = thirdTimeChoice;
-					break;
-				case 1:
-					decay = thirdTimeChoice;
-					release = secondTimeChoice;
-					break;
+			switch ((int) attackLengthChoice.fun().get(0)) {
+				case 0 -> {
+					attack = firstTimeChoice;
+					switch (decayReleaseChoice) {
+						case 0 -> {
+							decay = secondTimeChoice;
+							release = thirdTimeChoice;
+						}
+						case 1 -> {
+							decay = thirdTimeChoice;
+							release = secondTimeChoice;
+						}
+					}
 				}
-				break;
-			case 1:
-				attack = secondTimeChoice;
-				switch(decayReleaseChoice) {
-				case 0:
-					decay = firstTimeChoice;
-					release = thirdTimeChoice;
-					break;
-				case 1:
-					decay = thirdTimeChoice;
-					release = firstTimeChoice;
-					break;
-				}			
-				break;
-			case 2:
-				attack = thirdTimeChoice;
-				switch(decayReleaseChoice) {
-				case 0:
-					decay = secondTimeChoice;
-					release = firstTimeChoice;
-					break;
-				case 1:
-					decay = firstTimeChoice;
-					release = secondTimeChoice;
-					break;
-				}			
-				break;
+				case 1 -> {
+					attack = secondTimeChoice;
+					switch (decayReleaseChoice) {
+						case 0 -> {
+							decay = firstTimeChoice;
+							release = thirdTimeChoice;
+						}
+						case 1 -> {
+							decay = thirdTimeChoice;
+							release = firstTimeChoice;
+						}
+					}
+				}
+				case 2 -> {
+					attack = thirdTimeChoice;
+					switch (decayReleaseChoice) {
+						case 0 -> {
+							decay = secondTimeChoice;
+							release = firstTimeChoice;
+						}
+						case 1 -> {
+							decay = firstTimeChoice;
+							release = secondTimeChoice;
+						}
+					}
+				}
 			}
-			break;
 		}
 		return new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
 	}
@@ -270,25 +267,25 @@ public class LinearAmplitudeEnvelopeGenerator {
 		int secondTimeIndexChoice = 0;
 		int thirdTimeIndexChoice = 0;
 
-		switch(firstChoice) {
-		// Attack, decay and release are all possibly different
-		case 0:
-			firstTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-3)));
-			secondTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-4)));
-			thirdTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-6)));
-			break;
+		switch (firstChoice) {
+			// Attack, decay and release are all possibly different
+			case 0 -> {
+				firstTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 3)));
+				secondTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 4)));
+				thirdTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 6)));
+			}
 			// Attack, decay and release where 2 are possibly the same
-		case 1: 
-			firstTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-3)));
-			secondTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-5)));
-			thirdTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-5)));
-			break;
+			case 1 -> {
+				firstTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 3)));
+				secondTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 5)));
+				thirdTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 5)));
+			}
 			// Attack, decay and release where all 3 are possibly the same
-		case 2: 
-			firstTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-4)));
-			secondTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-4)));
-			thirdTimeIndexChoice = (int)(Math.round(Math.random()*(times.length-4)));
-			break;
+			case 2 -> {
+				firstTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 4)));
+				secondTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 4)));
+				thirdTimeIndexChoice = (int) (Math.round(Math.random() * (times.length - 4)));
+			}
 		}
 		int secondChoice = (int)(Math.round(Math.random()*2));
 		int thirdChoice = (int)(Math.round(Math.random()*1));
@@ -296,46 +293,46 @@ public class LinearAmplitudeEnvelopeGenerator {
 		double decay = 0;
 		double release = 0;
 
-		switch(secondChoice) {
-		case 0:
-			attack = times[firstTimeIndexChoice];
-			switch(thirdChoice) {
-			case 0:
-				decay = times[secondTimeIndexChoice];
-				release = times[thirdTimeIndexChoice];
-				break;
-			case 1:
-				decay = times[thirdTimeIndexChoice];
-				release = times[secondTimeIndexChoice];
-				break;
+		switch (secondChoice) {
+			case 0 -> {
+				attack = times[firstTimeIndexChoice];
+				switch (thirdChoice) {
+					case 0 -> {
+						decay = times[secondTimeIndexChoice];
+						release = times[thirdTimeIndexChoice];
+					}
+					case 1 -> {
+						decay = times[thirdTimeIndexChoice];
+						release = times[secondTimeIndexChoice];
+					}
+				}
 			}
-			break;
-		case 1:
-			attack = times[secondTimeIndexChoice];
-			switch(thirdChoice) {
-			case 0:
-				decay = times[firstTimeIndexChoice];
-				release = times[thirdTimeIndexChoice];
-				break;
-			case 1:
-				decay = times[thirdTimeIndexChoice];
-				release = times[firstTimeIndexChoice];
-				break;
-			}			
-			break;
-		case 2:
-			attack = times[thirdTimeIndexChoice];
-			switch(thirdChoice) {
-			case 0:
-				decay = times[secondTimeIndexChoice];
-				release = times[firstTimeIndexChoice];
-				break;
-			case 1:
-				decay = times[firstTimeIndexChoice];
-				release = times[secondTimeIndexChoice];
-				break;
-			}			
-			break;
+			case 1 -> {
+				attack = times[secondTimeIndexChoice];
+				switch (thirdChoice) {
+					case 0 -> {
+						decay = times[firstTimeIndexChoice];
+						release = times[thirdTimeIndexChoice];
+					}
+					case 1 -> {
+						decay = times[thirdTimeIndexChoice];
+						release = times[firstTimeIndexChoice];
+					}
+				}
+			}
+			case 2 -> {
+				attack = times[thirdTimeIndexChoice];
+				switch (thirdChoice) {
+					case 0 -> {
+						decay = times[secondTimeIndexChoice];
+						release = times[firstTimeIndexChoice];
+					}
+					case 1 -> {
+						decay = times[firstTimeIndexChoice];
+						release = times[secondTimeIndexChoice];
+					}
+				}
+			}
 		}
 
 		return new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);

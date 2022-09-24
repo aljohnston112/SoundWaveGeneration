@@ -14,15 +14,12 @@ public class Dynamics {
 		fff, ff, f, mf, mp, p, pp, ppp
 	}	
 	
-	public Object[] dynamics = new Object[8];
+	public double[] dynamics = new double[8];
 	
-	double amplitude;
-
 	/**       Makes a new Dynamics 
 	 * @param amplitude as the max amplitude
 	 */
 	public Dynamics(double amplitude) {
-		this.amplitude = amplitude;
 		dynamics[0] = amplitude;
 		dynamics[1] = amplitude * 112.0/127.0;
 		dynamics[2] = amplitude * 96.0/127.0;
@@ -39,33 +36,25 @@ public class Dynamics {
 	 * @return A double representing the amplitude scaled down to the dynamic dyn
 	 */
 	public double getAmplitude(Dynamic dynamic) {
-		double dynamicAmplitude = amplitude;
 		switch(dynamic) {
 		case fff: 
-			break;
+			return dynamics[0];
 		case ff: 
-			dynamicAmplitude = (double) dynamics[1];
-			break;
+			return dynamics[1];
 		case f: 
-			dynamicAmplitude = (double) dynamics[2];
-			break;
+			return dynamics[2];
 		case mf: 
-			dynamicAmplitude = (double) dynamics[3];
-			break;
+			return dynamics[3];
 		case mp: 
-			dynamicAmplitude = (double) dynamics[4];
-			break;
+			return dynamics[4];
 		case p: 
-			dynamicAmplitude = (double) dynamics[5];
-			break;
+			return dynamics[5];
 		case pp: 
-			dynamicAmplitude = (double) dynamics[6];
-			break;
+			return dynamics[6];
 		case ppp: 
-			dynamicAmplitude = (double) dynamics[7];
-			break;
+			return dynamics[7];
 		}
-		return dynamicAmplitude;
+		throw new RuntimeException("Dynamics object is corrupt");
 	}
 
 	/**        Gets an amplitude envelope that represents a crescendo

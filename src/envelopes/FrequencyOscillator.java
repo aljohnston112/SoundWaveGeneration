@@ -9,8 +9,8 @@ import waves.Wave;
 
 /**
  * @author Alexander Johnston
- * Copyright 2019
- * A class for creating frequency oscillators
+ * @since  2019
+ *         A class for creating frequency oscillators
  */
 public class FrequencyOscillator {
 
@@ -58,48 +58,57 @@ public class FrequencyOscillator {
 		double frequencySlope = (startingFrequency-endingFrequency)/(samplesPerSecond*seconds);
 		double frequencyWidthSlope = (startingFrequencyWidth-endingFrequencyWidth)/(samplesPerSecond*seconds);
 		double radians = this.radians;
+		boolean updateRadians = true;	
 		double wave[] = new double[(int) Math.floor((seconds*samplesPerSecond))];
 		double[] temp; 
 		Wave waveObject = null;
 		for(int i = 0; i < wave.length-1; i++) {
 			switch(waveType) {
 			case SINE: 
-				waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*i)), ((startingFrequency-(frequencySlope*(i)))), radians);
+				waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*i))
+						, ((startingFrequency-(frequencySlope*(i)))), radians, updateRadians);
 				break;
 			case TRIANGLE: 
-				waveObject = new TriangleWave((startingFrequencyWidth-(frequencyWidthSlope*i)), ((startingFrequency-(frequencySlope*(i)))), radians);
+				waveObject = new TriangleWave((startingFrequencyWidth-(frequencyWidthSlope*i))
+						, ((startingFrequency-(frequencySlope*(i)))), radians, updateRadians);
 				break;
 			case SAW: 
-				waveObject = new SawWave((startingFrequencyWidth-(frequencyWidthSlope*i)), ((startingFrequency-(frequencySlope*(i)))), radians);
+				waveObject = new SawWave((startingFrequencyWidth-(frequencyWidthSlope*i))
+						, ((startingFrequency-(frequencySlope*(i)))), radians, updateRadians);
 				break;
 			case SQUARE: 
-				waveObject = new SquareWave((startingFrequencyWidth-(frequencyWidthSlope*i)), ((startingFrequency-(frequencySlope*(i)))), radians);
+				waveObject = new SquareWave((startingFrequencyWidth-(frequencyWidthSlope*i))
+						, ((startingFrequency-(frequencySlope*(i)))), radians, updateRadians);
 				break;
 			default:
-				waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*i)), ((startingFrequency-(frequencySlope*(i)))), radians);
+				waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*i))
+						, ((startingFrequency-(frequencySlope*(i)))), radians, updateRadians);
 				break;
 			}
 			temp = waveObject.getWave(1.0/samplesPerSecond, samplesPerSecond);
 			wave[i] = temp[0];
 			radians += ((2.0*Math.PI)/((samplesPerSecond/((startingFrequency-(frequencySlope*(i+1)))))));// - ((2.0*Math.PI)/((sr/((sf-(fs*(i+1))))))) -((2.0*Math.PI)/((sr/((sf-(fs*(i))))))); 
-			//p += ((2.0*Math.PI*(((sf-(fs*(i+1))))))/sr);
-			//p -= ((2.0*Math.PI)*((((sf-(fs*(i+1)))-(sr/((sf-(fs*(i))))))))/sr);
 		}
 		switch(waveType) {
 		case SINE: 
-			waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1)), ((startingFrequency-(frequencySlope*(wave.length-1)))), radians);
+			waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1))
+					, ((startingFrequency-(frequencySlope*(wave.length-1)))), radians, updateRadians);
 			break;
 		case TRIANGLE: 
-			waveObject = new TriangleWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1)), ((startingFrequency-(frequencySlope*(wave.length-1)))), radians);
+			waveObject = new TriangleWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1))
+					, ((startingFrequency-(frequencySlope*(wave.length-1)))), radians, updateRadians);
 			break;
 		case SAW: 
-			waveObject = new SawWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1)), ((startingFrequency-(frequencySlope*(wave.length-1)))), radians);
+			waveObject = new SawWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1))
+					, ((startingFrequency-(frequencySlope*(wave.length-1)))), radians, updateRadians);
 			break;
 		case SQUARE: 
-			waveObject = new SquareWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1)), ((startingFrequency-(frequencySlope*(wave.length-1)))), radians);
+			waveObject = new SquareWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1))
+					, ((startingFrequency-(frequencySlope*(wave.length-1)))), radians, updateRadians);
 			break;
 		default:
-			waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1)), ((startingFrequency-(frequencySlope*(wave.length-1)))), radians);
+			waveObject = new SineWave((startingFrequencyWidth-(frequencyWidthSlope*wave.length-1))
+					, ((startingFrequency-(frequencySlope*(wave.length-1)))), radians, updateRadians);
 			break;
 		}
 		temp = waveObject.getWave(1.0/samplesPerSecond, samplesPerSecond);
@@ -124,23 +133,29 @@ public class FrequencyOscillator {
 		double[] frequencyArray = getOscillator(linearAmplitudeEnvelope.getTime(), waveTypeOscillator, samplesPerSecond); 
 		double[] temp; 
 		double radians = this.radians; 
+		boolean updateRadians = true;	
 		Wave tempWave;
 		for(int i = 0; i < frequencyArray.length-1; i++) {
 			switch(waveTypeWave) {
 			case SINE: 
-				tempWave = new SineWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i]
+						, radians, updateRadians); 
 				break;
 			case TRIANGLE:
-				tempWave = new TriangleWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i], radians); 
+				tempWave = new TriangleWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i]
+						, radians, updateRadians); 
 				break;
 			case SAW:
-				tempWave = new SawWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i], radians); 
+				tempWave = new SawWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i]
+						, radians, updateRadians); 
 				break;
 			case SQUARE:
-				tempWave = new SquareWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i], radians); 
+				tempWave = new SquareWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i]
+						, radians, updateRadians); 
 				break;
 			default:
-				tempWave = new SineWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i], radians); 
+				tempWave = new SineWave(amplitudeArray[i]*amplitude, centerFrequency+frequencyArray[i]
+						, radians, updateRadians); 
 				break;
 			}
 			temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 
@@ -149,19 +164,24 @@ public class FrequencyOscillator {
 		}
 		switch(waveTypeWave) {
 		case SINE: 
-			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude, centerFrequency+frequencyArray[amplitudeArray.length-1], radians); 
+			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, centerFrequency+frequencyArray[amplitudeArray.length-1], radians, updateRadians); 
 			break;
 		case TRIANGLE:
-			tempWave = new TriangleWave(amplitudeArray[amplitudeArray.length-1]*amplitude, centerFrequency+frequencyArray[amplitudeArray.length-1], radians); 
+			tempWave = new TriangleWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, centerFrequency+frequencyArray[amplitudeArray.length-1], radians, updateRadians); 
 			break;
 		case SAW:
-			tempWave = new SawWave(amplitudeArray[amplitudeArray.length-1]*amplitude, centerFrequency+frequencyArray[amplitudeArray.length-1], radians); 
+			tempWave = new SawWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, centerFrequency+frequencyArray[amplitudeArray.length-1], radians, updateRadians); 
 			break;
 		case SQUARE:
-			tempWave = new SquareWave(amplitudeArray[amplitudeArray.length-1]*amplitude, centerFrequency+frequencyArray[amplitudeArray.length-1], radians); 
+			tempWave = new SquareWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, centerFrequency+frequencyArray[amplitudeArray.length-1], radians, updateRadians); 
 			break;
 		default:
-			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude, centerFrequency+frequencyArray[amplitudeArray.length-1], radians); 
+			tempWave = new SineWave(amplitudeArray[amplitudeArray.length-1]*amplitude
+					, centerFrequency+frequencyArray[amplitudeArray.length-1], radians, updateRadians); 
 			break;
 		}
 		temp = tempWave.getWave(1.0/samplesPerSecond, samplesPerSecond); 

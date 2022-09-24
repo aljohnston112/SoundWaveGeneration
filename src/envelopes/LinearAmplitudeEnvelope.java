@@ -1,16 +1,15 @@
 package envelopes;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Objects;
 
 import arrays.Array;
-import waves.Wave;
 import waves.Wave.WaveType;
+import waves.Wave;
 
 /**
-@author Alexander Johnston 
-        Copyright 2019 
-        A class for making amplitude envelopes
+ * @author Alexander Johnston 
+ * @since  2019 
+ *         A class for making amplitude envelopes
  */
 public class LinearAmplitudeEnvelope extends Envelope {
 
@@ -21,15 +20,32 @@ public class LinearAmplitudeEnvelope extends Envelope {
 	double sustain;
 
 	protected float samplesPerSecond;
-	
-	/**       Constructs a linear amplitude envelope with 
-	 * @param amplitude as the amplitude at the end of the attack and the beginning of the decay 
-	 * @param sustain as the amplitude at the end of the decay and the beginning of the release
-	 * @param attack in seconds, as the amount of time it takes to get from 0 to amplitude 
-	 * @param decay in seconds, as the amount of time it takes to get from amplitude to sustain
-	 * @param release in seconds, as the amount of time it takes to get from sustain to 0
+
+	/**        Constructs a linear amplitude envelope.
+	 * @param  amplitude as the amplitude at the end of the attack and the beginning of the decay 
+	 * @param  sustain as the amplitude at the end of the decay and the beginning of the release
+	 * @param  attack in seconds, as the amount of time it takes to get from 0 to amplitude 
+	 * @param  decay in seconds, as the amount of time it takes to get from amplitude to sustain
+	 * @param  release in seconds, as the amount of time it takes to get from sustain to 0
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1, or
+	 *         attack, decay or release are less than 0.
 	 */
-	public LinearAmplitudeEnvelope(double amplitude, double sustain, double attack, double decay, double release, float samplesPerSecond) {
+	public LinearAmplitudeEnvelope(double amplitude, double sustain
+			, double attack, double decay, double release, float samplesPerSecond) {
+		if(attack < 0) {
+			throw new IllegalArgumentException("attack passed to LinearAmplitudeEnvelope() must be at least 0");
+		}
+		if(decay < 0) {
+			throw new IllegalArgumentException("decay passed to LinearAmplitudeEnvelope() must be at least 0");
+		}
+		if(release < 0) {
+			throw new IllegalArgumentException("release passed to LinearAmplitudeEnvelope() must be at least 0");	
+		}
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "LinearAmplitudeEnvelope() must be greater than 0");	
+		}
+		// Invariants secured
 
 		this.amplitude = amplitude;	
 		this.sustain = sustain;
@@ -62,7 +78,7 @@ public class LinearAmplitudeEnvelope extends Envelope {
 			this.releaseAmplitudes[i] = ((this.sustain-((i)*slope)));
 		}
 	}
-	
+
 	/**
 	 * @return the maximum amplitude of this linear amplitude envelope
 	 */
@@ -70,12 +86,20 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		return (amplitude > sustain) ? amplitude : sustain;
 	}
 
-	/**       Adds a wave to this amplitude envelope
-	 * @param wave as the wave added to this envelope 
-	 *        Make note that the wave amplitude will be scaled down to the max envelope amplitude
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds a wave to this amplitude envelope.
+	 * @param  wave as the wave added to this envelope.
+	 *         The wave amplitude will be scaled down to the max envelope amplitude
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
-	public void addTremolo(Wave wave, float samplesPerSecond, ExecutorService threadRunner){
+	public void addTremolo(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremolo() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] tremolo = wave.getWave(getTime(), samplesPerSecond);
@@ -111,16 +135,23 @@ public class LinearAmplitudeEnvelope extends Envelope {
 			}
 			releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremolo[i+attackAmplitudes.length+decayAmplitudes.length]*waveScale));
 		}
-
-		scaleEnvelope(threadRunner);
+		scaleEnvelope();
 	}
 
-	/**       Adds a wave to this amplitude envelope
-	 * @param wave as the wave added to this envelope 
-	 *        Make note that the wave amplitude will be scaled down to the max envelope amplitude
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds a wave to this amplitude envelope.
+	 * @param  wave as the wave added to this envelope.
+	 *         The wave amplitude will be scaled down to the max envelope amplitude
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
-	public void addTremoloSwell(Wave wave, float samplesPerSecond, ExecutorService threadRunner){
+	public void addTremoloSwell(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwell() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] tremolo = wave.getWave(getTime(), samplesPerSecond);
@@ -168,21 +199,21 @@ public class LinearAmplitudeEnvelope extends Envelope {
 			}
 			releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremolo[i+attackAmplitudes.length+decayAmplitudes.length]*waveScale*swellMultiplierWave[i+attackAmplitudes.length+decayAmplitudes.length]));
 		}
-
-		scaleEnvelope(threadRunner);
+		scaleEnvelope();
 	}
 
 
-	/**Finds the max amplitude and scales it to the amplitude or the sustain, whichever is greater
+	/** Finds the max amplitude and scales it to the amplitude or the sustain, whichever is greater.
 	 * 
 	 */
-	private void scaleEnvelope(ExecutorService threadRunner) {
+	private void scaleEnvelope() {
 
 		// The max amplitude of the envelope
 		double maxEnvelopeAmplitude = Math.max(this.amplitude, this.sustain);
 
 		// Find the max and scale the envelope
-		double max = Math.max(Math.max(Array.getMaxMag(attackAmplitudes, threadRunner), Array.getMaxMag(decayAmplitudes, threadRunner)), Array.getMaxMag(releaseAmplitudes, threadRunner));
+		double max = Math.max(Math.max(Array.max(attackAmplitudes)
+				, Array.max(decayAmplitudes)), Array.max(releaseAmplitudes));
 		double amplitudeScale = maxEnvelopeAmplitude/max;
 		for(int i = 0; i < attackAmplitudes.length; i++) {
 			attackAmplitudes[i] = attackAmplitudes[i]*amplitudeScale;
@@ -195,11 +226,19 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}		
 	}
 
-	/**       Adds tremolo swell to the attack  of this envelope. 
-	 * @param wave as the wave added to the attack  of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo swell to the attack of this envelope. 
+	 * @param  wave as the wave added to the attack of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToAttack(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToAttack() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] swellWave = wave.getWave(attackAmplitudes.length/samplesPerSecond, samplesPerSecond);
@@ -240,11 +279,19 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo to the attack of this envelope. 
-	 * @param wave as the wave added to the attack  of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo to the attack of this envelope. 
+	 * @param  wave as the wave added to the attack  of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloToAttack(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloToAttack() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] tremoloWave = wave.getWave(attackAmplitudes.length/samplesPerSecond, samplesPerSecond);
@@ -276,17 +323,25 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo swell to the decay of this envelope. 
-	 * @param wave as the wave added to the decay  of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo swell to the decay of this envelope. 
+	 * @param  wave as the wave added to the decay  of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToDecay(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToDecay() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] swellWave = wave.getWave(decayAmplitudes.length/samplesPerSecond, samplesPerSecond);	
 
 		if(this.amplitude == this.sustain) {
-			swellWave = Wave.addToWave(swellWave, -wave.getAmplitude());
+			swellWave = Array.addTo(swellWave, -wave.getAmplitude());
 		}
 
 		// For scaling the wave amplitude down to the envelope amplitude to prevent under and over flow
@@ -342,11 +397,19 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo to the decay of this envelope. 
-	 * @param wave as the wave added to the decay  of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo to the decay of this envelope. 
+	 * @param  wave as the wave added to the decay  of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloToDecay(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloToDecay() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] tremoloWave = wave.getWave(decayAmplitudes.length/samplesPerSecond, samplesPerSecond);	
@@ -394,11 +457,20 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo swell to the release of this envelope.  
-	 * @param wave as the wave added to the release of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo swell to the release of this envelope.  
+	 * @param  wave as the wave added to the release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToRelease(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToRelease() must be greater than 0");	
+		}
+		// Invariants secured
+
 		// The wave to add to the envelope
 		double[] swellWave = wave.getWave(releaseAmplitudes.length/samplesPerSecond, samplesPerSecond);	
 
@@ -438,11 +510,20 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo to the release of this envelope.  
-	 * @param wave as the wave added to the release of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo to the release of this envelope.  
+	 * @param  wave as the wave added to the release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloToRelease(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloToRelease() must be greater than 0");	
+		}
+		// Invariants secured
+
 		// The wave to add to the envelope
 		double[] tremoloWave = wave.getWave(releaseAmplitudes.length/samplesPerSecond, samplesPerSecond);	
 
@@ -471,11 +552,19 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds tremolo swell to the attack and decay of this envelope. 
-	 * @param wave as the wave added to the attack and decay of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo swell to the attack and decay of this envelope. 
+	 * @param  wave as the wave added to the attack and decay of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToAttackAndDecay(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToAttackAndDecay() must be greater than 0");	
+		}
+		// Invariants secured
 
 		if(this.amplitude > this.sustain) {
 			addTremoloSwellToAttack(wave, samplesPerSecond);
@@ -530,11 +619,19 @@ public class LinearAmplitudeEnvelope extends Envelope {
 
 	}
 
-	/**       Adds tremolo to the attack and decay of this envelope. 
-	 * @param wave as the wave added to the attack and decay of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo to the attack and decay of this envelope. 
+	 * @param  wave as the wave added to the attack and decay of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloToAttackAndDecay(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloToAttackAndDecay() must be greater than 0");	
+		}
+		// Invariants secured
 
 		if(this.amplitude > this.sustain) {
 			addTremoloToAttack(wave, samplesPerSecond);
@@ -577,29 +674,55 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds a tremolo swell to the attack and release of this envelope. 
-	 * @param wave as the wave added to the attack and release of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds a tremolo swell to the attack and release of this envelope. 
+	 * @param  wave as the wave added to the attack and release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToAttackAndRelease(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToAttackAndRelease() must be greater than 0");	
+		}
+		// Invariants secured
+
 		addTremoloSwellToAttack(wave,samplesPerSecond);
 		addTremoloSwellToRelease(wave,samplesPerSecond);
 	}
 
-	/**       Adds tremolo to the attack and release of this envelope. 
-	 * @param wave as the wave added to the attack and release of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds tremolo to the attack and release of this envelope. 
+	 * @param  wave as the wave added to the attack and release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloToAttackAndRelease(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloToAttackAndRelease() must be greater than 0");	
+		}
+		// Invariants secured
+
 		addTremoloToAttack(wave,samplesPerSecond);
 		addTremoloToRelease(wave,samplesPerSecond);
 	}
 
-	/**       Adds a tremolo swell to the decay and release of this envelope. 
-	 * @param wave as the wave added to the decay and release of the envelope
-	 * @param samplesPerSecond as the sample rate
+	/**        Adds a tremolo swell to the decay and release of this envelope. 
+	 * @param  wave as the wave added to the decay and release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
 	 */
 	public void addTremoloSwellToDecayAndRelease(Wave wave, float samplesPerSecond){
+		Objects.requireNonNull(wave);
+		if(samplesPerSecond < 1) {
+			throw new IllegalArgumentException("samplesPerSecond passed to "
+					+ "addTremoloSwellToDecayAndRelease() must be greater than 0");	
+		}
+		// Invariants secured
 
 		// The wave to add to the envelope
 		double[] swellWave = wave.getWave((releaseAmplitudes.length+decayAmplitudes.length)/samplesPerSecond, samplesPerSecond);	
@@ -675,162 +798,181 @@ public class LinearAmplitudeEnvelope extends Envelope {
 		}
 	}
 
-	/**       Adds a tremolo to the decay and release of this envelope. 
-	 * @param wave as the wave added to the decay and release of the envelope
-	 * @param samplesPerSecond as the sample rate
-	 */
+	/**        Adds a tremolo to the decay and release of this envelope. 
+	 * @param  wave as the wave added to the decay and release of the envelope
+	 * @param  samplesPerSecond as the sample rate
+	 * @throws NullPointerException if wave is null.
+	 * @throws IllegalArgumentException if samplesPerSecond is less than 1.
+	 */	
 	public void addTremoloToDecayAndRelease(Wave wave, float samplesPerSecond){
-		// The wave to add to the envelope
-		double[] tremoloWave = wave.getWave((releaseAmplitudes.length+decayAmplitudes.length)/samplesPerSecond, samplesPerSecond);	
+		 Objects.requireNonNull(wave);
+		 if(samplesPerSecond < 1) {
+			 throw new IllegalArgumentException("samplesPerSecond passed to "
+					 + "addTremoloToDecayAndRelease() must be greater than 0");	
+		 }
+		 // Invariants secured
 
-		// For scaling the wave amplitude down to the envelope amplitude to prevent under and over flow
-		double waveMultiplier;
+		 // The wave to add to the envelope
+		 double[] tremoloWave = wave.getWave((releaseAmplitudes.length+decayAmplitudes.length)/samplesPerSecond, samplesPerSecond);	
 
-		if(this.amplitude - this.sustain < this.sustain) {
+		 // For scaling the wave amplitude down to the envelope amplitude to prevent under and over flow
+		 double waveMultiplier;
 
-			// Add the wave to the envelope
-			for(int i = 0; i < decayAmplitudes.length; i++) {
-				double waveAmplitude = wave.getAmplitude();
-				if(waveAmplitude > (decayAmplitudes[i]-this.amplitude) && (decayAmplitudes[i]-this.amplitude) < this.sustain-decayAmplitudes[i]) {
-					waveMultiplier = (decayAmplitudes[i]-this.amplitude)/waveAmplitude;
-				} else if(waveAmplitude>this.sustain-decayAmplitudes[i]) {
-					waveMultiplier = (this.sustain-decayAmplitudes[i])/waveAmplitude;
-				} else {
-					waveMultiplier = 1.0;
-				}
-				decayAmplitudes[i] = (decayAmplitudes[i]+(tremoloWave[i+attackAmplitudes.length]*waveMultiplier));
-			}
-			for(int i = 0; i < releaseAmplitudes.length; i++) {
-				waveMultiplier = 1.0;
-				if(this.sustain-releaseAmplitudes[i]<releaseAmplitudes[i]) {
-					double waveAmplitude = wave.getAmplitude();
-					if(waveAmplitude>(this.sustain-releaseAmplitudes[i])){
-						waveMultiplier = (this.sustain-releaseAmplitudes[i])/waveAmplitude;
-					}
-				}
-				else if(this.sustain-releaseAmplitudes[i]>=releaseAmplitudes[i]) {
-					double waveAmplitude = wave.getAmplitude();
-					if(waveAmplitude>(releaseAmplitudes[i])){
-						waveMultiplier = (releaseAmplitudes[i])/waveAmplitude;
-					}
-				}
-				releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremoloWave[i+decayAmplitudes.length]*waveMultiplier));
-			}
-		} else if(this.amplitude - this.sustain >= this.sustain) {
+		 if(this.amplitude - this.sustain < this.sustain) {
 
-			for(int i = 0; i < decayAmplitudes.length; i++) {
-				waveMultiplier = 1.0;
-				if(this.amplitude-decayAmplitudes[i]<decayAmplitudes[i]) {
-					double waveAmplitude = wave.getAmplitude();
-					if(waveAmplitude>(this.amplitude-decayAmplitudes[i])){
-						waveMultiplier = (this.amplitude-decayAmplitudes[i])/waveAmplitude;
-					}
-				} else if(this.amplitude-decayAmplitudes[i]>=decayAmplitudes[i]){
-					double waveAmplitude = wave.getAmplitude();
-					if(waveAmplitude>(decayAmplitudes[i])){
-						waveMultiplier = (decayAmplitudes[i])/waveAmplitude;
-					}
-				}
-				decayAmplitudes[i] = (decayAmplitudes[i]+(tremoloWave[i+attackAmplitudes.length]*waveMultiplier));
-			}
+			 // Add the wave to the envelope
+			 for(int i = 0; i < decayAmplitudes.length; i++) {
+				 double waveAmplitude = wave.getAmplitude();
+				 if(waveAmplitude > (decayAmplitudes[i]-this.amplitude) && (decayAmplitudes[i]-this.amplitude) < this.sustain-decayAmplitudes[i]) {
+					 waveMultiplier = (decayAmplitudes[i]-this.amplitude)/waveAmplitude;
+				 } else if(waveAmplitude>this.sustain-decayAmplitudes[i]) {
+					 waveMultiplier = (this.sustain-decayAmplitudes[i])/waveAmplitude;
+				 } else {
+					 waveMultiplier = 1.0;
+				 }
+				 decayAmplitudes[i] = (decayAmplitudes[i]+(tremoloWave[i+attackAmplitudes.length]*waveMultiplier));
+			 }
+			 for(int i = 0; i < releaseAmplitudes.length; i++) {
+				 waveMultiplier = 1.0;
+				 if(this.sustain-releaseAmplitudes[i]<releaseAmplitudes[i]) {
+					 double waveAmplitude = wave.getAmplitude();
+					 if(waveAmplitude>(this.sustain-releaseAmplitudes[i])){
+						 waveMultiplier = (this.sustain-releaseAmplitudes[i])/waveAmplitude;
+					 }
+				 }
+				 else if(this.sustain-releaseAmplitudes[i]>=releaseAmplitudes[i]) {
+					 double waveAmplitude = wave.getAmplitude();
+					 if(waveAmplitude>(releaseAmplitudes[i])){
+						 waveMultiplier = (releaseAmplitudes[i])/waveAmplitude;
+					 }
+				 }
+				 releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremoloWave[i+decayAmplitudes.length]*waveMultiplier));
+			 }
+		 } else if(this.amplitude - this.sustain >= this.sustain) {
 
-			for(int i = 0; i < releaseAmplitudes.length; i++) {
-				double waveAmplitude = wave.getAmplitude();
-				if(waveAmplitude>(releaseAmplitudes[i])){
-					waveMultiplier = (releaseAmplitudes[i])/waveAmplitude;
-				} else {
-					waveMultiplier = 1.0;
-				}
-				releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremoloWave[i+decayAmplitudes.length]*waveMultiplier));
-			}
-		}
-	}
+			 for(int i = 0; i < decayAmplitudes.length; i++) {
+				 waveMultiplier = 1.0;
+				 if(this.amplitude-decayAmplitudes[i]<decayAmplitudes[i]) {
+					 double waveAmplitude = wave.getAmplitude();
+					 if(waveAmplitude>(this.amplitude-decayAmplitudes[i])){
+						 waveMultiplier = (this.amplitude-decayAmplitudes[i])/waveAmplitude;
+					 }
+				 } else if(this.amplitude-decayAmplitudes[i]>=decayAmplitudes[i]){
+					 double waveAmplitude = wave.getAmplitude();
+					 if(waveAmplitude>(decayAmplitudes[i])){
+						 waveMultiplier = (decayAmplitudes[i])/waveAmplitude;
+					 }
+				 }
+				 decayAmplitudes[i] = (decayAmplitudes[i]+(tremoloWave[i+attackAmplitudes.length]*waveMultiplier));
+			 }
 
-	/* (non-Javadoc)
-	 * @see envelopes.Envelope#getTime()
-	 */
-	@Override
-	public double getTime() {
-		return ((attack*attackLoops)+(decay*decayLoops)+(release*releaseLoops)+
-				((attack+decay)*attackDecayLoops)+((attack+release)*attackReleaseLoops)+
-				((release+decay)*decayReleaseLoops)+((attack+decay+release)*(loops-1)));
-	}
+			 for(int i = 0; i < releaseAmplitudes.length; i++) {
+				 double waveAmplitude = wave.getAmplitude();
+				 if(waveAmplitude>(releaseAmplitudes[i])){
+					 waveMultiplier = (releaseAmplitudes[i])/waveAmplitude;
+				 } else {
+					 waveMultiplier = 1.0;
+				 }
+				 releaseAmplitudes[i] = (releaseAmplitudes[i]+(tremoloWave[i+decayAmplitudes.length]*waveMultiplier));
+			 }
+		 }
+	 }
 
-	/**       Adds an amplitude oscillator to this envelope
-	 * @param amplitudeOscillator The amplitude oscillator
-	 * @param waveType The wave type of the amplitude oscillator 
-	 * @param samplesPerSecond The sample rate
-	 */
-	public void addAmplitudeOscillator(AmplitudeOscillator amplitudeOscillator, WaveType waveType, float samplesPerSecond) {
+	 /* (non-Javadoc)
+	  * @see envelopes.Envelope#getTime()
+	  */
+	 @Override
+	 public double getTime() {
+		 return ((attack*attackLoops)+(decay*decayLoops)+(release*releaseLoops)+
+				 ((attack+decay)*attackDecayLoops)+((attack+release)*attackReleaseLoops)+
+				 ((release+decay)*decayReleaseLoops)+((attack+decay+release)*(loops-1)));
+	 }
 
-		double seconds = getTime();
-		double[] amplitudeFrequencyArray = amplitudeOscillator.getOscillator(seconds, waveType, samplesPerSecond);
-		double[] amplitudeOscillationArray = amplitudeOscillator.getAmplitudeArray(seconds, samplesPerSecond);
+	 /**        Adds an amplitude oscillator to this envelope
+	  * @param  amplitudeOscillator The amplitude oscillator
+	  * @param  waveType The wave type of the amplitude oscillator 
+	  * @param  samplesPerSecond The sample rate
+	  * @throws NullPointerException if amplitudeOscillator is null.
+	  * @throws IllegalArgumentException if samplesPerSecond is less than 1.
+	  */
+	 public void addAmplitudeOscillator(AmplitudeOscillator amplitudeOscillator, WaveType waveType, float samplesPerSecond) {
+		 Objects.requireNonNull(amplitudeOscillator);
+		 if(samplesPerSecond < 1) {
+			 throw new IllegalArgumentException("samplesPerSecond passed to "
+					 + "addAmplitudeOscillator() must be greater than 0");	
+		 }
+		 if(waveType == null) {
+			 System.out.println("waveType passed to addAmplitudeOscillator() is null. Defaulting to SINE.");
+		 }
+		 // Invariants secured
 
-		// For scaling the wave amplitude down to the envelope amplitude to prevent under and over flow
-		double amplitudeScale;	
+		 double seconds = getTime();
+		 double[] amplitudeFrequencyArray = amplitudeOscillator.getOscillator(seconds, waveType, samplesPerSecond);
+		 double[] amplitudeOscillationArray = amplitudeOscillator.getAmplitudeArray(seconds, samplesPerSecond);
 
-		// Add the wave to the envelope
-		for(int i = 0; i < attackAmplitudes.length; i++) {
-			if(amplitudeOscillationArray[i]>attackAmplitudes[i]) {
-				amplitudeScale = attackAmplitudes[i]/amplitudeOscillationArray[i];
-			} else {
-				amplitudeScale = 1;
-			}
-			attackAmplitudes[i] = (attackAmplitudes[i]+(amplitudeFrequencyArray[i]*amplitudeScale));
-		}
-		for(int i = 0; i < decayAmplitudes.length; i++) {
-			if(amplitudeOscillationArray[i+attackAmplitudes.length]>decayAmplitudes[i]) {
-				amplitudeScale = decayAmplitudes[i]/amplitudeOscillationArray[i+attackAmplitudes.length];
-			} else {
-				amplitudeScale = 1;
-			}
-			decayAmplitudes[i] = (decayAmplitudes[i]+(amplitudeFrequencyArray[i+attackAmplitudes.length]*amplitudeScale));
-		}
-		for(int i = 0; i < releaseAmplitudes.length; i++) {
-			if(amplitudeOscillationArray[i+attackAmplitudes.length+decayAmplitudes.length]>releaseAmplitudes[i]) {
-				amplitudeScale = releaseAmplitudes[i]/amplitudeOscillationArray[i+attackAmplitudes.length+decayAmplitudes.length];
-			} else {
-				amplitudeScale = 1;
-			}
-			releaseAmplitudes[i] = (releaseAmplitudes[i]+(amplitudeFrequencyArray[i+attackAmplitudes.length+decayAmplitudes.length]*amplitudeScale));
-		}
-		scaleDown();
-	}
+		 // For scaling the wave amplitude down to the envelope amplitude to prevent under and over flow
+		 double amplitudeScale;	
 
-	/**
-	 *        Finds the max amplitude and scales it to the amplitude or the sustain, whichever is greater
-	 */
-	private void scaleDown() {
+		 // Add the wave to the envelope
+		 for(int i = 0; i < attackAmplitudes.length; i++) {
+			 if(amplitudeOscillationArray[i]>attackAmplitudes[i]) {
+				 amplitudeScale = attackAmplitudes[i]/amplitudeOscillationArray[i];
+			 } else {
+				 amplitudeScale = 1;
+			 }
+			 attackAmplitudes[i] = (attackAmplitudes[i]+(amplitudeFrequencyArray[i]*amplitudeScale));
+		 }
+		 for(int i = 0; i < decayAmplitudes.length; i++) {
+			 if(amplitudeOscillationArray[i+attackAmplitudes.length]>decayAmplitudes[i]) {
+				 amplitudeScale = decayAmplitudes[i]/amplitudeOscillationArray[i+attackAmplitudes.length];
+			 } else {
+				 amplitudeScale = 1;
+			 }
+			 decayAmplitudes[i] = (decayAmplitudes[i]+(amplitudeFrequencyArray[i+attackAmplitudes.length]*amplitudeScale));
+		 }
+		 for(int i = 0; i < releaseAmplitudes.length; i++) {
+			 if(amplitudeOscillationArray[i+attackAmplitudes.length+decayAmplitudes.length]>releaseAmplitudes[i]) {
+				 amplitudeScale = releaseAmplitudes[i]/amplitudeOscillationArray[i+attackAmplitudes.length+decayAmplitudes.length];
+			 } else {
+				 amplitudeScale = 1;
+			 }
+			 releaseAmplitudes[i] = (releaseAmplitudes[i]+(amplitudeFrequencyArray[i+attackAmplitudes.length+decayAmplitudes.length]*amplitudeScale));
+		 }
+		 scaleDown();
+	 }
 
-		//The max amplitude of the envelope
-		double envelopeAmplitude =this.amplitude;
-		if(envelopeAmplitude < this.sustain) {
-			envelopeAmplitude = this.sustain;
-		}
-		
-		// Find the max and scale the envelope back down
-		ExecutorService threadRunner = Executors.newCachedThreadPool();
-		double max = Array.getMaxMag(attackAmplitudes, threadRunner);
-		double tempMax = Array.getMaxMag(decayAmplitudes, threadRunner);
-		if(max < tempMax) {
-			max = tempMax;
-		}
-		tempMax = Array.getMaxMag(releaseAmplitudes, threadRunner);
-		if(max < tempMax) {
-			max = tempMax;
-		}
+	 /** Finds the max amplitude and scales it to the amplitude or the sustain, whichever is greater
+	  * 
+	  */
+	 private void scaleDown() {
 
-		double amplitudeScale = envelopeAmplitude/max;
-		for(int i = 0; i < attackAmplitudes.length; i++) {
-			attackAmplitudes[i] = (attackAmplitudes[i]*amplitudeScale);
-		}
-		for(int i = 0; i < decayAmplitudes.length; i++) {
-			decayAmplitudes[i] = (decayAmplitudes[i]*amplitudeScale);
-		}
-		for(int i = 0; i < releaseAmplitudes.length; i++) {
-			releaseAmplitudes[i] = (releaseAmplitudes[i]*amplitudeScale);
-		}		
-	}
-	
+		 //The max amplitude of the envelope
+		 double envelopeAmplitude =this.amplitude;
+		 if(envelopeAmplitude < this.sustain) {
+			 envelopeAmplitude = this.sustain;
+		 }
+
+		 // Find the max and scale the envelope back down
+		 double max = Array.max(attackAmplitudes);
+		 double tempMax = Array.max(decayAmplitudes);
+		 if(max < tempMax) {
+			 max = tempMax;
+		 }
+		 tempMax = Array.max(releaseAmplitudes);
+		 if(max < tempMax) {
+			 max = tempMax;
+		 }
+
+		 double amplitudeScale = envelopeAmplitude/max;
+		 for(int i = 0; i < attackAmplitudes.length; i++) {
+			 attackAmplitudes[i] = (attackAmplitudes[i]*amplitudeScale);
+		 }
+		 for(int i = 0; i < decayAmplitudes.length; i++) {
+			 decayAmplitudes[i] = (decayAmplitudes[i]*amplitudeScale);
+		 }
+		 for(int i = 0; i < releaseAmplitudes.length; i++) {
+			 releaseAmplitudes[i] = (releaseAmplitudes[i]*amplitudeScale);
+		 }		
+	 }
+
 }

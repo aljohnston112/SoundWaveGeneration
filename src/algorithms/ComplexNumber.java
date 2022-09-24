@@ -8,10 +8,10 @@ package algorithms;
 public class ComplexNumber {
 
 	// The real portion of this complex number
-	private double real;
+	final private double real;
 
 	// The imaginary portion of this complex number
-	private double imaginary;
+	final private double imaginary;
 
 	/**
 	 * @return The real value of this imaginary number

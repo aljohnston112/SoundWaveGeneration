@@ -3,6 +3,8 @@ package notes;
 import envelopes.LinearAmplitudeEnvelope;
 import waves.Wave;
 
+import java.util.Objects;
+
 /**
 @author Alexander Johnston 
         Copyright 2019 
@@ -33,8 +35,12 @@ public class Note {
 	 * @return True if equal else false
 	 */
 	public boolean equals(Note note) {
-		return (this.name == note.name && this.hertz == note.hertz && this.seconds == note.seconds && 
-				linearAmplitudeEnvelope.equals(note.linearAmplitudeEnvelope) && this.amplitude == note.amplitude && this.radians == note.radians) ? true : false;
+		return Objects.equals(this.name, note.name) &&
+			this.hertz == note.hertz &&
+			this.seconds == note.seconds &&
+			linearAmplitudeEnvelope.equals(note.linearAmplitudeEnvelope) &&
+			this.amplitude == note.amplitude &&
+			this.radians == note.radians;
 	}
 
 	/**
@@ -173,10 +179,14 @@ public class Note {
 			double release = seconds/3.0;
 			linearAmplitudeEnvelope  = new LinearAmplitudeEnvelope(amplitude, sustain, attack, decay, release, samplesPerSecond);
 		}
+		/*
+		 // TODO SINEWAVE is immutable
 		waveObject.setAmplitude(this.amplitude);
 		waveObject.setFrequency(this.hertz);
 		waveObject.setPhase(this.radians);
+		*/
 		wave = waveObject.getWave(linearAmplitudeEnvelope.getEnvelope(), samplesPerSecond); 
 		return wave;
 	}
+	
 }

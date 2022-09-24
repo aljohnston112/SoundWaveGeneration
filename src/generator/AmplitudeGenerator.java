@@ -14,7 +14,7 @@ public class AmplitudeGenerator extends ChanseyCycle {
 	 * @param dynamics as the Dynamics Object that holds the amplitude values
 	 */
 	public AmplitudeGenerator(Dynamics dynamics) {
-		this.choices = dynamics.dynamics.clone();
+		//this.choices = dynamics.dynamics.clone();
 	}
 
 	/**        Gets a random amplitude from this AmplitudeGenerator

@@ -3,7 +3,7 @@ package envelopes;
 /**
 @author Alexander Johnston 
         Copyright 2019 
-        A class for envelopes to extend
+        A class for envelopes to extend.
 */
 public abstract class Envelope {
 
@@ -26,133 +26,126 @@ public abstract class Envelope {
 	protected double release;
 
 	// The amount of times the attack will be looped
-	// WARNING Settings greater than 1 will result in clicking
 	protected int attackLoops = 1;
 
 	// The amount of times the decay will be looped
-	// WARNING Settings greater than 1 will result in clicking if (attack != sustain)
 	protected int decayLoops = 1;
 
 	// The amount of times the release will be looped
-	// WARNING Settings greater than 1 will result in clicking
 	protected int releaseLoops = 1;
 
 	// The amount of times the attack and decay portions of the envelope will be looped
-	// WARNING Settings greater than 0 will result in clicking if sustain is not 0
 	protected int attackDecayLoops = 0;
 
 	// The amount of times the attack and release will be looped, skipping over the decay
-	// WARNING Settings greater than 0 will result in clicking if (sustain != amplitude)
 	protected int attackReleaseLoops = 0;
 
 	// The amount of times the decay and release will be looped
-	// WARNING Settings greater than 0 will result in clicking if (sustain != 0)
 	protected int decayReleaseLoops = 0;
 
 	// The amount of times the envelope will be looped
-	// WARNING If start and ending values are not the same, it will result in clicking
 	protected int loops = 1;
 	
 	/**
-	 * @return The number of times the attack loops
+	 * @return The number of times the attack loops.
 	 */
 	public int getAttackLoops() {
 		return attackLoops;
 	}
 
-	/**
-	 * @param attackLoops as the number of times the attack loops
+	/**	      WARNING Settings greater than 1 will result in instantaneous change.
+	 * @param attackLoops as the number of times the attack loops.
 	 */
 	public void setAttackLoops(int attackLoops) {
 		this.attackLoops = attackLoops;
 	}
 
 	/**
-	 * @return The number of times the decay loops
+	 * @return The number of times the decay loops.
 	 */
 	public int getDecayLoops() {
 		return decayLoops;
 	}
 
-	/**
-	 * @param decayLoops as the number of times the decay loops
+	/**	      WARNING Settings greater than 1 will result in instantaneous change if(amplitude != sustain).
+	 * @param decayLoops as the number of times the decay loops.
 	 */
 	public void setDecayLoops(int decayLoops) {
 		this.decayLoops = decayLoops;
 	}
 
 	/**
-	 * @return The number of times the release loops
+	 * @return The number of times the release loops.
 	 */
 	public int getReleaseLoops() {
 		return releaseLoops;
 	}
 
-	/**
-	 * @param releaseLoops as the number of times the release loops
+	/**	      WARNING Settings greater than 1 will result in instantaneous change.
+	 * @param releaseLoops as the number of times the release loops.
 	 */
 	public void setReleaseLoops(int releaseLoops) {
 		this.releaseLoops = releaseLoops;
 	}
 
-	/**
+	/**        
 	 * @return The number of times the attack and decay loop
 	 */
 	public int getAttackDecayLoops() {
 		return attackDecayLoops;
 	}
 
-	/**
-	 * @param attackDecayLoops as the number of times the attack and decay loop
+	/**        WARNING Settings greater than 0 will result in instantaneous change if(sustain != 0).
+	 * @param attackDecayLoops as the number of times the attack and decay loop.
 	 */
 	public void setAttackDecayLoops(int attackDecayLoops) {
 		this.attackDecayLoops = attackDecayLoops;
 	}
 
 	/**
-	 * @returnThe number of times the attack and release loop
+	 * @return The number of times the attack and release loop.
 	 */
 	public int getAttackReleaseLoops() {
 		return attackReleaseLoops;
 	}
 
-	/**
-	 * @param attackReleaseLoops as the number of times the attack and release loop
+	/**	      WARNING Settings greater than 0 will result in instantaneous change if(sustain != amplitude).
+	 * @param attackReleaseLoops as the number of times the attack and release loop.
 	 */
 	public void setAttackReleaseLoops(int attackReleaseLoops) {
 		this.attackReleaseLoops = attackReleaseLoops;
 	}
 
-	/**
-	 * @return The number of times the decay and release loop
+	/**	       
+	 * @return The number of times the decay and release loop.
 	 */
 	public int getDecayReleaseLoops() {
 		return decayReleaseLoops;
 	}
 
-	/**
-	 * @param decayReleaseLoops as the number of times the decay and release loop
+	/**	       WARNING Settings greater than 0 will result in instantaneous change if(sustain != 0).
+	 * @param decayReleaseLoops as the number of times the decay and release loop.
 	 */
 	public void setDecayReleaseLoops(int decayReleaseLoops) {
 		this.decayReleaseLoops = decayReleaseLoops;
 	}
 
 	/**
-	 * @return The number of times the envelope loops
+	 * @return The number of times the envelope loops.
 	 */
 	public int getLoops() {
 		return loops;
 	}
 
-	/**
-	 * @param loops as the number of times the envelope loops
+	/**	      WARNING If start and ending amplitudes are not the same, it will result in instantaneous change.
+	 * @param loops as the number of times the envelope loops.
 	 */
 	public void setLoops(int loops) {
 		this.loops = loops;
 	}
 	
 	/**
-	 * @return An array of amplitude values that represent this envelope
+	 * @return An array of amplitude values that represent this envelope.
 	 */
 	public double[] getEnvelope() {
 

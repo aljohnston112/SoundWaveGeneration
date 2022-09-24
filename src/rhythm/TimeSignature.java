@@ -38,4 +38,13 @@ public class TimeSignature {
 		return time;
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Time Signature: ");
+		sb.append(beatUnit);
+		sb.append("/");
+		sb.append(beatsPerBar);
+		return sb.toString();
+	}
+	
 }

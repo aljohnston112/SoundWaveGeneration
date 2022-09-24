@@ -7,12 +7,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import arrays.Array;
+import arrays.ConcatThread;
+import arrays.AddThread;
 import logic.OrderedPair;
 import waves.Wave;
-import waves.WaveAddThread;
-import waves.WaveConcatThread;
 
 /**
 @author Alexander Johnston 
@@ -190,7 +191,7 @@ public class ThreeDimensionalNoteSequence {
 		}
 		threadRunner.shutdown();
 		try {
-			return Array.getMax(futureSineWaves.get(0).get(), threadRunner);
+			return Array.max(futureSineWaves.get(0).get()/*, threadRunner* TODO Stop creating objects! */);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -227,10 +228,8 @@ public class ThreeDimensionalNoteSequence {
 		ArrayList<double[]> futureChannelOfWavesArrayList = new ArrayList<double[]>();
 		for(int i = 0; i < notes.size(); i++) {
 			ArrayList<Future<double[]>> futureChannelOfWaves = new ArrayList<Future<double[]>>();
-			Wave waveObjectCopy;
 			for(int j = 0; j < notes.get(i).size(); j++) {
-				waveObjectCopy = (Wave) waveObject.clone();
-				futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i).get(j), waveObjectCopy, samplesPerSecond)));
+				futureChannelOfWaves.add(threadRunner.submit(new NoteGetWaveThread(notes.get(i).get(j), waveObject, samplesPerSecond)));
 			}
 			futureChannelOfWavesArrayList.clear();
 			for(int k = 0; k < futureChannelOfWaves.size(); k++) {
@@ -246,13 +245,15 @@ public class ThreeDimensionalNoteSequence {
 				FutureTask<double[]> future = new FutureTask<double[]>(new Callable<double[]>() {
 					@Override
 					public double[] call() throws Exception {
-						return WaveConcatThread.concatWavesButterfly(futureChannelOfWavesArrayList, threadRunner);					}
+						return ConcatThread.concatArraysButterfly(futureChannelOfWavesArrayList , threadRunner);					}
 				});
-				threadRunner.execute(future);
 				wavesToBeAdded.add(future);
+				threadRunner.submit(future);
+
 			}
 		}
-		return WaveAddThread.addWavesButterfly(wavesToBeAdded, threadRunner);
+		
+		return AddThread.addArraysButterfly(wavesToBeAdded, threadRunner);
 	}
 
 }
