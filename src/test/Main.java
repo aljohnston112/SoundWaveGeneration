@@ -59,7 +59,9 @@ public class Main {
 
 	static final int BITS_PER_SAMPLE = 16;
 
-	static final double  MAXIMUM_AMPLITUDE = (StrictMath.pow(2.0, BITS_PER_SAMPLE-1))/2.0;
+	static final double  MAXIMUM_AMPLITUDE = 
+			(StrictMath.pow(2.0, BITS_PER_SAMPLE-1))/2.0
+			/ 4;
 
 	static final float SAMPLES_PER_SECOND = 44100;
 
@@ -70,49 +72,48 @@ public class Main {
 	public static void main(String[] args) {
 
 		// TODO edit and retest algorithms, envelopes, function, matrices, and polynomials packages
-		
-		//testWave();
-		//testSineWave();
-		//testNoiseWave();
-		//testSawWave();
-		//testSquareWave();
-		//testTriangleWave();
-		//testTimeSignature();
-		//testTempo();
-		//testMixedTimeSignature();
-		//testAdditiveTimeSignature();
-		//testTwelveToneEqualTemperament();
-		//testThreeDimensionalNoteSequence();
-		//testNoteSequence();
-		//testNote();
-		//testInterval();
-		//testScales();
-		//testEqualTemperament();
-		//testOrderedPair();
-		//testTimeGenerator();
-		//testTempoGenerator();
-		//testSequenceGenerator();
-		//testTimeSignatureGenerator();
-		//testNoteGenerator();
-		//testNodeGenerator();
-		//testLinearAmplitudeEnvelopeGenerator();
-		//testIntervalGenerator();
-		//testFrequencyGenerator();
-		//testAmplitudeGenerator();
-		//testLinearAmplitudeEnvelope();
-		//testDynamics();
-		testThreeDimensionalGraphGenerator();
-		testThreeDimensionalGraph();
-		testThreeDimensionalCycle();
-		testGraphGenerator();
-		testGraph();
-		testCycle();
-		testChanseyCycle();
-		//testStereoAudioLine();
-		//testMonoAudioLine();
-		//testAudioLine();
-		//testArray();
-		//testArrayLists();
+//		testWave();
+//		testSineWave();
+//		testNoiseWave();
+//		testSawWave();
+//		testSquareWave();
+//		testTriangleWave();
+//		testTimeSignature();
+//		testTempo();
+//		testMixedTimeSignature();
+//		testAdditiveTimeSignature();
+//		testTwelveToneEqualTemperament();
+//		testThreeDimensionalNoteSequence();
+//		testNoteSequence();
+//		testNote();
+//		testInterval();
+//		testScales();
+//		testEqualTemperament();
+//		testOrderedPair();
+//		testTimeGenerator();
+//		testTempoGenerator();
+//		testSequenceGenerator();
+//		testTimeSignatureGenerator();
+//		testNoteGenerator();
+//		testNodeGenerator();
+//		testLinearAmplitudeEnvelopeGenerator();
+//		testIntervalGenerator();
+//		testFrequencyGenerator();
+//		testAmplitudeGenerator();
+//		testLinearAmplitudeEnvelope();
+//		testDynamics();
+//		testThreeDimensionalGraphGenerator();
+//		testThreeDimensionalGraph();
+//		testThreeDimensionalCycle();
+//		testGraphGenerator();
+//		testGraph();
+//		testCycle();
+//		testChanseyCycle();
+//		testStereoAudioLine();
+//		testMonoAudioLine();
+//		testAudioLine();
+//		testArray();
+//		testArrayLists();
 
 	}
 
@@ -193,7 +194,10 @@ public class Main {
 		//double[] waveEdge = sineWave.getWaveEdge(seconds, samplesPerSecond);
 
 		// For testing audio channels and waves
-		MonoAudioLine mac = new MonoAudioLine(SAMPLES_PER_SECOND, BITS_PER_SAMPLE);
+		MonoAudioLine mac = new MonoAudioLine(
+				SAMPLES_PER_SECOND, 
+				BITS_PER_SAMPLE
+		);
 		mac.play(wave);
 		System.out.print("SineWave breakpoint\n");
 
@@ -210,7 +214,6 @@ public class Main {
 		// Get waves
 		double seconds = 1.0;
 		float samplesPerSecond = SAMPLES_PER_SECOND;
-		@SuppressWarnings("unused")
 		double[] wave = noiseWave.getWave(seconds, samplesPerSecond);
 
 		// For testing audio channels and waves

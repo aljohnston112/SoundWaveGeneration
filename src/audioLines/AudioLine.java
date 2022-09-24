@@ -65,5 +65,9 @@ abstract public class AudioLine {
 		sourceDataLine.write(wave, 0, wave.length);
 		sourceDataLine.drain();
 	}
+	
+	public void close() {
+		sourceDataLine.close();
+	}
 
 }
