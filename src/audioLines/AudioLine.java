@@ -54,7 +54,6 @@ abstract public class AudioLine {
 		byteBuffer.get(output);
 		sourceDataLine.start();
 		sourceDataLine.write(output, 0, output.length);
-		sourceDataLine.drain();
 	}
 
 	/** Plays a 8-bit wave on this channel
@@ -63,7 +62,6 @@ abstract public class AudioLine {
 	protected void play(byte[] wave) {
 		sourceDataLine.start();
 		sourceDataLine.write(wave, 0, wave.length);
-		sourceDataLine.drain();
 	}
 	
 	public void close() {
